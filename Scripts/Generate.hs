@@ -38,6 +38,7 @@ outputs d e = let define r = selectDefines r d
      mkFlag "LinkFlags"     $
        union (define "^IFF_") (enum "^IFF_"),
      mkEnum "LinkAttrType"  $ enum   "^IFLA_",
+     mkEnum "LinkAttrInfoType" $ enum "^IFLA_INFO_",
      mkFlag "AddrFlags"     $ define "^IFA_F_",
      mkEnum "Scope"         $ enum   "^RT_SCOPE_",
      mkEnum "AddrAttrType"  $ enum   "^IFA_",
@@ -48,6 +49,7 @@ outputs d e = let define r = selectDefines r d
      mkEnum "RouteAttrType" $ enum   "^RTA_",
      mkEnum "NeighAttrType" $ enum   "^NDA_",
      mkFlag "NeighStateFlags" $ define   "^NUD_",
+     mkEnum "VethAttrInfoType" $ enum "^VETH_INFO_",
      mkEnum "NetlinkFamily" $ define   "^NETLINK_",
      mkEnum "RtNetlinkGroups" $ enum   "^RTNLGRP_"]
 
@@ -61,5 +63,6 @@ includeFiles = [ "sys/types.h"
                , "linux/netlink.h"
                , "linux/rtnetlink.h"
                , "linux/neighbour.h"
+               , "linux/veth.h"
                ]
 

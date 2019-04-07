@@ -75,7 +75,7 @@ executable Generate
 
   if flag(Generators)
     build-depends: base >=4.6 && <5,
-                   language-c <0.7,
+                   language-c,
                    containers,
                    process,
                    regex-pcre
@@ -92,7 +92,7 @@ executable GenerateGenl
   ghc-options: -Wall
   if flag(Generators)
     build-depends: base >=4.6 && <5,
-                   language-c <0.7,
+                   language-c,
                    containers,
                    process,
                    regex-pcre
@@ -109,7 +109,7 @@ executable GenerateNL80211
   ghc-options: -Wall
   if flag(Generators)
     build-depends: base >=4.6 && <5,
-                   language-c <0.7,
+                   language-c,
                    containers,
                    process,
                    regex-pcre

@@ -95,7 +95,7 @@ getEnums source = do
     check (Left err) = error $ show err
     check (Right a)   = a
     preprocessed = readProcess "gcc" ["-E", "-"] source
-    initPos = position 0 "" 0 0
+    initPos = position 0 "" 0 0 Nothing
     cleanEnums = filterWithKey (\k _ -> not ("_" `isPrefixOf` k))
 
 
