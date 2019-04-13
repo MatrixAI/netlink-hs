@@ -33,27 +33,22 @@ data MessageHeader = MessageHeader
   { messageType :: NLC.MessageType
   , messageFlags :: Word16
   , messageSeqNum :: Word32
-  , messagePID :: Word32
+  , messagePid :: Word32
   } deriving (Show, Eq)
-
--- inclusive of length
-messageHeaderSize :: Int
-messageHeaderSize = 16
 
 type AttributeType = Word16
 
 newtype AttributeHeader = AttributeHeader
   { attributeType :: AttributeType } deriving (Show, Eq)
 
--- inclusive of length
-attributeHeaderSize :: Int
-attributeHeaderSize = 4
 
 type Attributes = [Attribute]
 
 data Attribute = Attribute AttributeHeader
   (Either B.ByteString (NE.NonEmpty Attribute))
   deriving (Show, Eq)
+
+type Messages a = [Message a]
 
 data Message a = Message
   { messageHeader :: MessageHeader
@@ -85,34 +80,67 @@ attrAlignRemainder attrSize = attrSize `mod` attrAlign
 attrPadding :: Int -> Int
 attrPadding attrSize = attrAlign - attrAlignRemainder attrSize
 
+-- inclusive of length
+attrHeaderSize :: Int
+attrHeaderSize = 4
+
+parseAttrHeader :: Get (AttributeHeader, Int)
+parseAttrHeader = SG.isolate attrHeaderSize $ do
+  attrSize <- fromIntegral <$> SG.getWord16host
+  attrType <- fromIntegral <$> SG.getWord16host
+  return (AttributeHeader attrType, attrSize - attrHeaderSize)
+
+-- warning: body recursion
+parseAttr :: Set AttributeType -> Get Attribute
+parseAttr containerTypes = do
+  (attrHeader, attrPaySize) <- parseAttrHeader
+  if (attributeType attrHeader) `Set.notMember` containerTypes then do
+    attrVal <- SG.getByteString attrPaySize
+    parseAttrPadding attrPaySize
+    return $ Attribute attrHeader (Left attrVal)
+  else do
+    nestedAttrs <- SG.isolate attrPaySize $ parseAttrs containerTypes
+    parseAttrPadding attrPaySize
+    return $ case NE.nonEmpty nestedAttrs of
+      Just nestedAttrs' -> Attribute attrHeader (Right $ nestedAttrs')
+      Nothing           -> Attribute attrHeader (Left "")
+
 parseAttrs :: Set AttributeType -> Get Attributes
 parseAttrs containerTypes = whileM isNotEmpty $ parseAttr containerTypes
 
--- this kind of recursion is not tail recursive
--- so it can blow up on large sizes
--- but i doubt that netlink messages are that big
-parseAttr :: Set AttributeType -> Get Attribute
-parseAttr containerTypes = do
-  attrSize <- fromIntegral <$> SG.getWord16host
-  attrType <- fromIntegral <$> SG.getWord16host
-  if Set.notMember attrType containerTypes then do
-    attrVal <- SG.getByteString (attrSize - attributeHeaderSize)
-    parseAttrPadding attrSize
-    return $ Attribute (AttributeHeader attrType) (Left attrVal)
-  else do
-    nestedAttrs <- SG.isolate attrSize $ parseAttrs containerTypes
-    parseAttrPadding attrSize
-    case NE.nonEmpty nestedAttrs of
-      Just nestedAttrs' -> return $ Attribute (AttributeHeader attrType) (Right $ nestedAttrs')
-      Nothing -> return $ Attribute (AttributeHeader attrType) (Left "")
-
 parseAttrPadding :: Int -> Get ()
-parseAttrPadding attrSize = do
-  let remainder = attrAlignRemainder attrSize
+parseAttrPadding size = do
+  let remainder = attrAlignRemainder size
   e <- SG.isEmpty
   if not e && remainder /= 0
   then SG.skip $ attrAlign - remainder
   else return ()
+
+-- inclusive of length
+msgHeaderSize :: Int
+msgHeaderSize = 16
+
+parseMsgHeader:: Get (MessageHeader, Int)
+parseMsgHeader = SG.isolate msgHeaderSize $ do
+  msgSize   <- fromIntegral <$> SG.getWord32host
+  msgType   <- fromIntegral <$> SG.getWord16host
+  msgFlags  <- fromIntegral <$> SG.getWord16host
+  msgSeqNum <- fromIntegral <$> SG.getWord32host
+  msgPid    <- fromIntegral <$> SG.getWord32host
+  return
+    (MessageHeader { messageType = msgType
+    , messageFlags = msgFlags
+    , messageSeqNum = msgSeqNum
+    , messagePid = msgPid
+    }, msgSize - msgHeaderSize)
+
+
+-- this only works for a types that are convertable, eq, and show?
+-- parseMsg :: Set AttributeType -> Get (Messsage a)
+
+-- parseMessage :: Set AttributeType -> Get (Message a)
+
+-- parseMessages :: Set AttributeType -> Get (Messages a)
 
 
 
