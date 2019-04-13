@@ -49,29 +49,23 @@ newtype AttributeHeader = AttributeHeader
 attributeHeaderSize :: Int
 attributeHeaderSize = 4
 
--- data Attributes = Attributes (NE.NonEmpty Attributes)
---                 | Attribute AttributeType Attributes
---                 | AttributeValue B.ByteString
---                 deriving (Show, Eq)
-
--- that way we always have a non-empty list of attributes
--- type Attributes = NonEmpty Attribute
--- data Attribute = Attribute AttributeType (Either B.ByteString Attributes)
-
 type Attributes = [Attribute]
-data Attribute = Attribute AttributeHeader (Either B.ByteString (NE.NonEmpty Attribute)) deriving (Show, Eq)
+
+data Attribute = Attribute AttributeHeader
+  (Either B.ByteString (NE.NonEmpty Attribute))
+  deriving (Show, Eq)
 
 data Message a = Message
   { messageHeader :: MessageHeader
   , messageCustom :: a
   , messageAttributes :: Attributes
   } |
-  PacketError
+  MessageError
   { messageHeader :: MessageHeader
   , messageErrorCode :: CInt
-  , messageError :: B.ByteString
+  , messageError :: Message a
   } |
-  PacketDone
+  MessageDone
   { messageHeader :: MessageHeader
   }
   deriving (Show, Eq)
@@ -82,21 +76,6 @@ isEmpty = SG.isEmpty
 isNotEmpty :: SG.Get Bool
 isNotEmpty = not <$> SG.isEmpty
 
--- not sure if this is actaully what we need
--- getPackets :: B.ByteString -> SG.Get a -> Either String [a]
--- getPackets bytes parsePacket = SG.runGet parsePackets bytes
---   where
---     parsePackets = do
---       pkts <- whileM isNotEmpty parsePacket
---       e <- SG.isEmpty
---       unless e $ fail "incomplete parsing packets"
---       return pkts
-
--- so we end up with `Attributes []`
--- right.. so we could have nothing
--- but once we start with something, we should have something
-
-
 attrAlign :: Int
 attrAlign = 4
 
@@ -106,7 +85,7 @@ attrAlignRemainder attrSize = attrSize `mod` attrAlign
 attrPadding :: Int -> Int
 attrPadding attrSize = attrAlign - attrAlignRemainder attrSize
 
-parseAttrs :: Set AttributeType -> Get [Attribute]
+parseAttrs :: Set AttributeType -> Get Attributes
 parseAttrs containerTypes = whileM isNotEmpty $ parseAttr containerTypes
 
 -- this kind of recursion is not tail recursive
@@ -125,7 +104,7 @@ parseAttr containerTypes = do
     parseAttrPadding attrSize
     case NE.nonEmpty nestedAttrs of
       Just nestedAttrs' -> return $ Attribute (AttributeHeader attrType) (Right $ nestedAttrs')
-      Nothing -> fail "container type does not have nested attributes"
+      Nothing -> return $ Attribute (AttributeHeader attrType) (Left "")
 
 parseAttrPadding :: Int -> Get ()
 parseAttrPadding attrSize = do
