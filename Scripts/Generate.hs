@@ -1,3 +1,9 @@
+-- this script performs some generation
+-- on the haskell code...
+-- i'm hoping instead of constant numbers
+-- we generate data types
+-- and then derive Enum instead...
+
 module Main where
 
 import Control.Arrow ((&&&))
@@ -31,8 +37,13 @@ outputs d e = let define r = selectDefines r d
                   enum r = selectEnum r e
               in map fst &&& map snd $
     [mkEnum "AddressFamily" $ define "^AF_",
-     mkEnum "MessageType" $
-       union (define "^NLMSG_(?!ALIGNTO)") (enum "^RTM_"),
+     mkEnum "MessageType" $ define "^NLMSG_(?!ALIGNTO)",
+     -- these are families
+     -- RouteFamily really... so it's the family header
+     -- but it's the message type under the Route family
+     --
+     mkEnum "RouteMessageType" $ enum "^RTM_",
+
      mkFlag "MessageFlags"  $ define "^NLM_F_",
      mkEnum "LinkType"      $ define "^ARPHRD_",
      mkFlag "LinkFlags"     $

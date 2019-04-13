@@ -15,7 +15,7 @@ where
 import Control.Monad (join)
 import Data.Char (isNumber)
 import Data.Function (on)
-import Data.List (isPrefixOf, sortBy, nubBy)
+import Data.List (isPrefixOf, sortBy, nubBy, intercalate)
 import Data.Map (Map, elems, filterWithKey, fromList, insert,
                  keys, mapKeys, toList, lookup, empty)
 import Data.Maybe (mapMaybe, fromJust)
@@ -49,17 +49,48 @@ mkFlag name vals = (name : map fst values,
                         n ++ " = " ++ show v]
     values = sortBy (compare `on` snd) . toList . mapKeys ("f" ++) $ vals
 
-mkEnum :: String -> Map String Integer -> ([String], [String])
-mkEnum name vals = (name : fName : map fst values,
-                    ty : "" : fun : "" : join (map makeConst values))
+-- flags are more complicated
+-- because we don't actually have their numbers...
+-- their numbers are not exactly enumed
+-- instead we have to derive it exactly
+-- oh yea sometimes we are making enums from flags
+-- we have to make sure we actually deriving them properly
+-- so we have to ensure that first...
+-- we need to create a class thinsg as well
+mkFlag2 :: String -> Map String Integer -> ([String], [String])
+mkFlag2 name vals = (name : map fst values,
+                    ty : "" : join (map makeConst values))
   where
     ty = "newtype " ++ name ++ " = " ++
           name ++
-          " Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)"
-    makeConst (n, v) = [n ++ " :: (Num a) => a",
+          " Int deriving (Bits, Eq, Enum, Integral, Num, Ord, Real, Show)"
+    makeConst (n, v) = [n ++ " :: (Num a, Bits a) => a",
                         n ++ " = " ++ show v]
-    values = sortBy (compare `on` snd) . toList . mapKeys ('e' :) $ vals
-    (fName, fun) = showEnum name vals
+    values = sortBy (compare `on` snd) . toList . mapKeys ("f" ++) $ vals
+
+mkEnum :: String -> Map String Integer -> ([String], [String])
+mkEnum name vals = ([name], [constrs])
+  where
+    typeConstr = "data " ++ name ++ " = "
+    typeConstrIndent = ("\n" ++ replicate (length typeConstr - 3) ' ')
+    dataConstrs = intercalate
+                  (typeConstrIndent ++ " | ")
+                  (map fst values)
+    constrDeriving = typeConstrIndent ++ " deriving (Eq, Enum, Show)"
+    constrs = typeConstr ++ dataConstrs ++ constrDeriving ++ "\n"
+    values = sortBy (compare `on` snd) $ toList vals
+
+-- mkEnum :: String -> Map String Integer -> ([String], [String])
+-- mkEnum name vals = (name : fName : map fst values,
+--                     ty : "" : fun : "" : join (map makeConst values))
+--   where
+--     ty = "newtype " ++ name ++ " = " ++
+--           name ++
+--           " Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)"
+--     makeConst (n, v) = [n ++ " :: (Num a) => a",
+--                         n ++ " = " ++ show v]
+--     values = sortBy (compare `on` snd) . toList . mapKeys ('e' :) $ vals
+--     (fName, fun) = showEnum name vals
 
 showEnum :: String -> Map String Integer -> (String, String)
 showEnum name vals = (fName,
@@ -70,6 +101,19 @@ showEnum name vals = (fName,
     makeLine (n, v) = fName ++ ' ':(show v) ++ " = \"" ++ n ++ "\"\n"
     values = nubBy ((==) `on` snd) . sortBy (compare `on` snd) . toList $vals
     fName = "show" ++ name
+
+
+-- this is what we need (so we need to change showEnum) to that
+-- and then we get constructors for everything
+-- and that is cool...
+-- instance Enum AddressFamily where
+--   toEnum 0 = AF_UNSPEC
+--   toEnum 1 = AF_FILE
+--   fromEnum AF_UNSPEC = 0
+--   fromEnum AF_FILE = 1
+
+derivingEnum :: String -> Map String Integer -> (String, String)
+derivingEnum = undefined
 
 selectDefines :: String -> Map String Integer -> Map String Integer
 selectDefines regex = filterWithKey (\k _ -> k =~ regex)

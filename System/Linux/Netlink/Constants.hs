@@ -1,334 +1,121 @@
 {-# OPTIONS_HADDOCK hide, prune, ignore-exports #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-module System.Linux.Netlink.Constants (AddressFamily, showAddressFamily, eAF_UNSPEC, eAF_FILE, eAF_LOCAL, eAF_UNIX, eAF_INET, eAF_AX25, eAF_IPX, eAF_APPLETALK, eAF_NETROM, eAF_BRIDGE, eAF_ATMPVC, eAF_X25, eAF_INET6, eAF_ROSE, eAF_DECnet, eAF_NETBEUI, eAF_SECURITY, eAF_KEY, eAF_NETLINK, eAF_ROUTE, eAF_PACKET, eAF_ASH, eAF_ECONET, eAF_ATMSVC, eAF_RDS, eAF_SNA, eAF_IRDA, eAF_PPPOX, eAF_WANPIPE, eAF_LLC, eAF_IB, eAF_MPLS, eAF_CAN, eAF_TIPC, eAF_BLUETOOTH, eAF_IUCV, eAF_RXRPC, eAF_ISDN, eAF_PHONET, eAF_IEEE802154, eAF_CAIF, eAF_ALG, eAF_NFC, eAF_VSOCK, eAF_KCM, eAF_QIPCRTR, eAF_SMC, eAF_MAX, MessageType, showMessageType, eNLMSG_NOOP, eNLMSG_ERROR, eNLMSG_DONE, eNLMSG_OVERRUN, eNLMSG_MIN_TYPE, eRTM_BASE, eRTM_NEWLINK, eRTM_DELLINK, eRTM_GETLINK, eRTM_SETLINK, eRTM_NEWADDR, eRTM_DELADDR, eRTM_GETADDR, eRTM_NEWROUTE, eRTM_DELROUTE, eRTM_GETROUTE, eRTM_NEWNEIGH, eRTM_DELNEIGH, eRTM_GETNEIGH, eRTM_NEWRULE, eRTM_DELRULE, eRTM_GETRULE, eRTM_NEWQDISC, eRTM_DELQDISC, eRTM_GETQDISC, eRTM_NEWTCLASS, eRTM_DELTCLASS, eRTM_GETTCLASS, eRTM_NEWTFILTER, eRTM_DELTFILTER, eRTM_GETTFILTER, eRTM_NEWACTION, eRTM_DELACTION, eRTM_GETACTION, eRTM_NEWPREFIX, eRTM_GETMULTICAST, eRTM_GETANYCAST, eRTM_NEWNEIGHTBL, eRTM_GETNEIGHTBL, eRTM_SETNEIGHTBL, eRTM_NEWNDUSEROPT, eRTM_NEWADDRLABEL, eRTM_DELADDRLABEL, eRTM_GETADDRLABEL, eRTM_GETDCB, eRTM_SETDCB, eRTM_NEWNETCONF, eRTM_DELNETCONF, eRTM_GETNETCONF, eRTM_NEWMDB, eRTM_DELMDB, eRTM_GETMDB, eRTM_NEWNSID, eRTM_DELNSID, eRTM_GETNSID, eRTM_NEWSTATS, eRTM_GETSTATS, eRTM_NEWCACHEREPORT, MessageFlags, fNLM_F_REQUEST, fNLM_F_MULTI, fNLM_F_ACK, fNLM_F_ECHO, fNLM_F_DUMP_INTR, fNLM_F_DUMP_FILTERED, fNLM_F_CAPPED, fNLM_F_NONREC, fNLM_F_REPLACE, fNLM_F_ROOT, fNLM_F_ACK_TLVS, fNLM_F_EXCL, fNLM_F_MATCH, fNLM_F_ATOMIC, fNLM_F_CREATE, fNLM_F_APPEND, LinkType, showLinkType, eARPHRD_NETROM, eARPHRD_ETHER, eARPHRD_EETHER, eARPHRD_AX25, eARPHRD_PRONET, eARPHRD_CHAOS, eARPHRD_IEEE802, eARPHRD_ARCNET, eARPHRD_APPLETLK, eARPHRD_DLCI, eARPHRD_ATM, eARPHRD_METRICOM, eARPHRD_IEEE1394, eARPHRD_EUI64, eARPHRD_INFINIBAND, eARPHRD_SLIP, eARPHRD_CSLIP, eARPHRD_SLIP6, eARPHRD_CSLIP6, eARPHRD_RSRVD, eARPHRD_ADAPT, eARPHRD_ROSE, eARPHRD_X25, eARPHRD_HWX25, eARPHRD_CAN, eARPHRD_PPP, eARPHRD_CISCO, eARPHRD_HDLC, eARPHRD_LAPB, eARPHRD_DDCMP, eARPHRD_RAWHDLC, eARPHRD_RAWIP, eARPHRD_TUNNEL, eARPHRD_TUNNEL6, eARPHRD_FRAD, eARPHRD_SKIP, eARPHRD_LOOPBACK, eARPHRD_LOCALTLK, eARPHRD_FDDI, eARPHRD_BIF, eARPHRD_SIT, eARPHRD_IPDDP, eARPHRD_IPGRE, eARPHRD_PIMREG, eARPHRD_HIPPI, eARPHRD_ASH, eARPHRD_ECONET, eARPHRD_IRDA, eARPHRD_FCPP, eARPHRD_FCAL, eARPHRD_FCPL, eARPHRD_FCFABRIC, eARPHRD_IEEE802_TR, eARPHRD_IEEE80211, eARPHRD_IEEE80211_PRISM, eARPHRD_IEEE80211_RADIOTAP, eARPHRD_IEEE802154, eARPHRD_IEEE802154_MONITOR, eARPHRD_PHONET, eARPHRD_PHONET_PIPE, eARPHRD_CAIF, eARPHRD_IP6GRE, eARPHRD_NETLINK, eARPHRD_6LOWPAN, eARPHRD_VSOCKMON, LinkFlags, fIFF_TUN, fIFF_UP, fIFF_BROADCAST, fIFF_TAP, fIFF_DEBUG, fIFF_LOOPBACK, fIFF_NAPI, fIFF_POINTOPOINT, fIFF_NAPI_FRAGS, fIFF_NOTRAILERS, fIFF_RUNNING, fIFF_NOARP, fIFF_MULTI_QUEUE, fIFF_PROMISC, fIFF_ALLMULTI, fIFF_ATTACH_QUEUE, fIFF_DETACH_QUEUE, fIFF_MASTER, fIFF_PERSIST, fIFF_SLAVE, fIFF_MULTICAST, fIFF_NOFILTER, fIFF_NO_PI, fIFF_ONE_QUEUE, fIFF_PORTSEL, fIFF_AUTOMEDIA, fIFF_VNET_HDR, fIFF_DYNAMIC, fIFF_TUN_EXCL, fIFF_LOWER_UP, fIFF_DORMANT, fIFF_ECHO, LinkAttrType, showLinkAttrType, eIFLA_UNSPEC, eIFLA_ADDRESS, eIFLA_BROADCAST, eIFLA_IFNAME, eIFLA_MTU, eIFLA_LINK, eIFLA_QDISC, eIFLA_STATS, eIFLA_COST, eIFLA_PRIORITY, eIFLA_MASTER, eIFLA_WIRELESS, eIFLA_PROTINFO, eIFLA_TXQLEN, eIFLA_MAP, eIFLA_WEIGHT, eIFLA_OPERSTATE, eIFLA_LINKMODE, eIFLA_LINKINFO, eIFLA_NET_NS_PID, eIFLA_IFALIAS, eIFLA_NUM_VF, eIFLA_VFINFO_LIST, eIFLA_STATS64, eIFLA_VF_PORTS, eIFLA_PORT_SELF, eIFLA_AF_SPEC, eIFLA_GROUP, eIFLA_NET_NS_FD, eIFLA_EXT_MASK, eIFLA_PROMISCUITY, eIFLA_NUM_TX_QUEUES, eIFLA_NUM_RX_QUEUES, eIFLA_CARRIER, eIFLA_PHYS_PORT_ID, eIFLA_CARRIER_CHANGES, eIFLA_PHYS_SWITCH_ID, eIFLA_LINK_NETNSID, eIFLA_PHYS_PORT_NAME, eIFLA_PROTO_DOWN, eIFLA_GSO_MAX_SEGS, eIFLA_GSO_MAX_SIZE, eIFLA_PAD, eIFLA_XDP, eIFLA_EVENT, eIFLA_NEW_NETNSID, eIFLA_IF_NETNSID, eIFLA_CARRIER_UP_COUNT, eIFLA_CARRIER_DOWN_COUNT, eIFLA_NEW_IFINDEX, LinkAttrInfoType, showLinkAttrInfoType, eIFLA_INFO_UNSPEC, eIFLA_INFO_KIND, eIFLA_INFO_DATA, eIFLA_INFO_XSTATS, eIFLA_INFO_SLAVE_KIND, eIFLA_INFO_SLAVE_DATA, AddrFlags, fIFA_F_SECONDARY, fIFA_F_TEMPORARY, fIFA_F_NODAD, fIFA_F_OPTIMISTIC, fIFA_F_DADFAILED, fIFA_F_HOMEADDRESS, fIFA_F_DEPRECATED, fIFA_F_TENTATIVE, fIFA_F_PERMANENT, fIFA_F_MANAGETEMPADDR, fIFA_F_NOPREFIXROUTE, fIFA_F_MCAUTOJOIN, fIFA_F_STABLE_PRIVACY, Scope, showScope, eRT_SCOPE_UNIVERSE, eRT_SCOPE_SITE, eRT_SCOPE_LINK, eRT_SCOPE_HOST, eRT_SCOPE_NOWHERE, AddrAttrType, showAddrAttrType, eIFA_UNSPEC, eIFA_ADDRESS, eIFA_LOCAL, eIFA_LABEL, eIFA_BROADCAST, eIFA_ANYCAST, eIFA_CACHEINFO, eIFA_MULTICAST, eIFA_FLAGS, eIFA_RT_PRIORITY, RouteTableId, showRouteTableId, eRT_TABLE_UNSPEC, eRT_TABLE_COMPAT, eRT_TABLE_DEFAULT, eRT_TABLE_MAIN, eRT_TABLE_LOCAL, eRT_TABLE_MAX, RouteProto, showRouteProto, eRTPROT_UNSPEC, eRTPROT_REDIRECT, eRTPROT_KERNEL, eRTPROT_BOOT, eRTPROT_STATIC, eRTPROT_GATED, eRTPROT_RA, eRTPROT_MRT, eRTPROT_ZEBRA, eRTPROT_BIRD, eRTPROT_DNROUTED, eRTPROT_XORP, eRTPROT_NTK, eRTPROT_DHCP, eRTPROT_MROUTED, eRTPROT_BABEL, eRTPROT_BGP, eRTPROT_ISIS, eRTPROT_OSPF, eRTPROT_RIP, eRTPROT_EIGRP, RouteType, showRouteType, eRTN_UNSPEC, eRTN_UNICAST, eRTN_LOCAL, eRTN_BROADCAST, eRTN_ANYCAST, eRTN_MULTICAST, eRTN_BLACKHOLE, eRTN_UNREACHABLE, eRTN_PROHIBIT, eRTN_THROW, eRTN_NAT, eRTN_XRESOLVE, RouteFlags, fRTM_F_NOTIFY, fRTM_F_CLONED, fRTM_F_EQUALIZE, fRTM_F_PREFIX, fRTM_F_LOOKUP_TABLE, fRTM_F_FIB_MATCH, RouteAttrType, showRouteAttrType, eRTA_UNSPEC, eRTA_DST, eRTA_SRC, eRTA_IIF, eRTA_OIF, eRTA_GATEWAY, eRTA_PRIORITY, eRTA_PREFSRC, eRTA_METRICS, eRTA_MULTIPATH, eRTA_PROTOINFO, eRTA_FLOW, eRTA_CACHEINFO, eRTA_SESSION, eRTA_MP_ALGO, eRTA_TABLE, eRTA_MARK, eRTA_MFC_STATS, eRTA_VIA, eRTA_NEWDST, eRTA_PREF, eRTA_ENCAP_TYPE, eRTA_ENCAP, eRTA_EXPIRES, eRTA_PAD, eRTA_UID, eRTA_TTL_PROPAGATE, eRTA_IP_PROTO, eRTA_SPORT, eRTA_DPORT, NeighAttrType, showNeighAttrType, eNDA_UNSPEC, eNDA_DST, eNDA_LLADDR, eNDA_CACHEINFO, eNDA_PROBES, eNDA_VLAN, eNDA_PORT, eNDA_VNI, eNDA_IFINDEX, eNDA_MASTER, eNDA_LINK_NETNSID, eNDA_SRC_VNI, NeighStateFlags, fNUD_NONE, fNUD_INCOMPLETE, fNUD_REACHABLE, fNUD_STALE, fNUD_DELAY, fNUD_PROBE, fNUD_FAILED, fNUD_NOARP, fNUD_PERMANENT, VethAttrInfoType, showVethAttrInfoType, eVETH_INFO_UNSPEC, eVETH_INFO_PEER, NetlinkFamily, showNetlinkFamily, eNETLINK_ROUTE, eNETLINK_ADD_MEMBERSHIP, eNETLINK_UNUSED, eNETLINK_DROP_MEMBERSHIP, eNETLINK_USERSOCK, eNETLINK_FIREWALL, eNETLINK_PKTINFO, eNETLINK_BROADCAST_ERROR, eNETLINK_INET_DIAG, eNETLINK_SOCK_DIAG, eNETLINK_NFLOG, eNETLINK_NO_ENOBUFS, eNETLINK_RX_RING, eNETLINK_XFRM, eNETLINK_SELINUX, eNETLINK_TX_RING, eNETLINK_ISCSI, eNETLINK_LISTEN_ALL_NSID, eNETLINK_AUDIT, eNETLINK_LIST_MEMBERSHIPS, eNETLINK_CAP_ACK, eNETLINK_FIB_LOOKUP, eNETLINK_CONNECTOR, eNETLINK_EXT_ACK, eNETLINK_NETFILTER, eNETLINK_IP6_FW, eNETLINK_DNRTMSG, eNETLINK_KOBJECT_UEVENT, eNETLINK_GENERIC, eNETLINK_SCSITRANSPORT, eNETLINK_ECRYPTFS, eNETLINK_RDMA, eNETLINK_CRYPTO, eNETLINK_SMC, RtNetlinkGroups, showRtNetlinkGroups, eRTNLGRP_NONE, eRTNLGRP_LINK, eRTNLGRP_NOTIFY, eRTNLGRP_NEIGH, eRTNLGRP_TC, eRTNLGRP_IPV4_IFADDR, eRTNLGRP_IPV4_MROUTE, eRTNLGRP_IPV4_ROUTE, eRTNLGRP_IPV4_RULE, eRTNLGRP_IPV6_IFADDR, eRTNLGRP_IPV6_MROUTE, eRTNLGRP_IPV6_ROUTE, eRTNLGRP_IPV6_IFINFO, eRTNLGRP_DECnet_IFADDR, eRTNLGRP_NOP2, eRTNLGRP_DECnet_ROUTE, eRTNLGRP_DECnet_RULE, eRTNLGRP_NOP4, eRTNLGRP_IPV6_PREFIX, eRTNLGRP_IPV6_RULE, eRTNLGRP_ND_USEROPT, eRTNLGRP_PHONET_IFADDR, eRTNLGRP_PHONET_ROUTE, eRTNLGRP_DCB, eRTNLGRP_IPV4_NETCONF, eRTNLGRP_IPV6_NETCONF, eRTNLGRP_MDB, eRTNLGRP_MPLS_ROUTE, eRTNLGRP_NSID, eRTNLGRP_MPLS_NETCONF, eRTNLGRP_IPV4_MROUTE_R, eRTNLGRP_IPV6_MROUTE_R) where
+module System.Linux.Netlink.Constants (AddressFamily, MessageType, RouteMessageType, MessageFlags, fNLM_F_REQUEST, fNLM_F_MULTI, fNLM_F_ACK, fNLM_F_ECHO, fNLM_F_DUMP_INTR, fNLM_F_DUMP_FILTERED, fNLM_F_CAPPED, fNLM_F_NONREC, fNLM_F_REPLACE, fNLM_F_ROOT, fNLM_F_ACK_TLVS, fNLM_F_EXCL, fNLM_F_MATCH, fNLM_F_ATOMIC, fNLM_F_CREATE, fNLM_F_APPEND, LinkType, LinkFlags, fIFF_TUN, fIFF_UP, fIFF_BROADCAST, fIFF_TAP, fIFF_DEBUG, fIFF_LOOPBACK, fIFF_NAPI, fIFF_POINTOPOINT, fIFF_NAPI_FRAGS, fIFF_NOTRAILERS, fIFF_RUNNING, fIFF_NOARP, fIFF_MULTI_QUEUE, fIFF_PROMISC, fIFF_ALLMULTI, fIFF_ATTACH_QUEUE, fIFF_DETACH_QUEUE, fIFF_MASTER, fIFF_PERSIST, fIFF_SLAVE, fIFF_MULTICAST, fIFF_NOFILTER, fIFF_NO_PI, fIFF_ONE_QUEUE, fIFF_PORTSEL, fIFF_AUTOMEDIA, fIFF_VNET_HDR, fIFF_DYNAMIC, fIFF_TUN_EXCL, fIFF_LOWER_UP, fIFF_DORMANT, fIFF_ECHO, LinkAttrType, LinkAttrInfoType, AddrFlags, fIFA_F_SECONDARY, fIFA_F_TEMPORARY, fIFA_F_NODAD, fIFA_F_OPTIMISTIC, fIFA_F_DADFAILED, fIFA_F_HOMEADDRESS, fIFA_F_DEPRECATED, fIFA_F_TENTATIVE, fIFA_F_PERMANENT, fIFA_F_MANAGETEMPADDR, fIFA_F_NOPREFIXROUTE, fIFA_F_MCAUTOJOIN, fIFA_F_STABLE_PRIVACY, Scope, AddrAttrType, RouteTableId, RouteProto, RouteType, RouteFlags, fRTM_F_NOTIFY, fRTM_F_CLONED, fRTM_F_EQUALIZE, fRTM_F_PREFIX, fRTM_F_LOOKUP_TABLE, fRTM_F_FIB_MATCH, RouteAttrType, NeighAttrType, NeighStateFlags, fNUD_NONE, fNUD_INCOMPLETE, fNUD_REACHABLE, fNUD_STALE, fNUD_DELAY, fNUD_PROBE, fNUD_FAILED, fNUD_NOARP, fNUD_PERMANENT, VethAttrInfoType, NetlinkFamily, RtNetlinkGroups) where
 
 import Data.Bits
 
-newtype AddressFamily = AddressFamily Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
+data AddressFamily = AF_UNSPEC
+                   | AF_FILE
+                   | AF_LOCAL
+                   | AF_UNIX
+                   | AF_INET
+                   | AF_AX25
+                   | AF_IPX
+                   | AF_APPLETALK
+                   | AF_NETROM
+                   | AF_BRIDGE
+                   | AF_ATMPVC
+                   | AF_X25
+                   | AF_INET6
+                   | AF_ROSE
+                   | AF_DECnet
+                   | AF_NETBEUI
+                   | AF_SECURITY
+                   | AF_KEY
+                   | AF_NETLINK
+                   | AF_ROUTE
+                   | AF_PACKET
+                   | AF_ASH
+                   | AF_ECONET
+                   | AF_ATMSVC
+                   | AF_RDS
+                   | AF_SNA
+                   | AF_IRDA
+                   | AF_PPPOX
+                   | AF_WANPIPE
+                   | AF_LLC
+                   | AF_IB
+                   | AF_MPLS
+                   | AF_CAN
+                   | AF_TIPC
+                   | AF_BLUETOOTH
+                   | AF_IUCV
+                   | AF_RXRPC
+                   | AF_ISDN
+                   | AF_PHONET
+                   | AF_IEEE802154
+                   | AF_CAIF
+                   | AF_ALG
+                   | AF_NFC
+                   | AF_VSOCK
+                   | AF_KCM
+                   | AF_QIPCRTR
+                   | AF_SMC
+                   | AF_MAX
+                   deriving (Eq, Enum, Show)
 
-showAddressFamily :: (Num a) => (Show a) => (Eq a) => a -> String
-showAddressFamily 0 = "AF_UNSPEC"
-showAddressFamily 1 = "AF_FILE"
-showAddressFamily 2 = "AF_INET"
-showAddressFamily 3 = "AF_AX25"
-showAddressFamily 4 = "AF_IPX"
-showAddressFamily 5 = "AF_APPLETALK"
-showAddressFamily 6 = "AF_NETROM"
-showAddressFamily 7 = "AF_BRIDGE"
-showAddressFamily 8 = "AF_ATMPVC"
-showAddressFamily 9 = "AF_X25"
-showAddressFamily 10 = "AF_INET6"
-showAddressFamily 11 = "AF_ROSE"
-showAddressFamily 12 = "AF_DECnet"
-showAddressFamily 13 = "AF_NETBEUI"
-showAddressFamily 14 = "AF_SECURITY"
-showAddressFamily 15 = "AF_KEY"
-showAddressFamily 16 = "AF_NETLINK"
-showAddressFamily 17 = "AF_PACKET"
-showAddressFamily 18 = "AF_ASH"
-showAddressFamily 19 = "AF_ECONET"
-showAddressFamily 20 = "AF_ATMSVC"
-showAddressFamily 21 = "AF_RDS"
-showAddressFamily 22 = "AF_SNA"
-showAddressFamily 23 = "AF_IRDA"
-showAddressFamily 24 = "AF_PPPOX"
-showAddressFamily 25 = "AF_WANPIPE"
-showAddressFamily 26 = "AF_LLC"
-showAddressFamily 27 = "AF_IB"
-showAddressFamily 28 = "AF_MPLS"
-showAddressFamily 29 = "AF_CAN"
-showAddressFamily 30 = "AF_TIPC"
-showAddressFamily 31 = "AF_BLUETOOTH"
-showAddressFamily 32 = "AF_IUCV"
-showAddressFamily 33 = "AF_RXRPC"
-showAddressFamily 34 = "AF_ISDN"
-showAddressFamily 35 = "AF_PHONET"
-showAddressFamily 36 = "AF_IEEE802154"
-showAddressFamily 37 = "AF_CAIF"
-showAddressFamily 38 = "AF_ALG"
-showAddressFamily 39 = "AF_NFC"
-showAddressFamily 40 = "AF_VSOCK"
-showAddressFamily 41 = "AF_KCM"
-showAddressFamily 42 = "AF_QIPCRTR"
-showAddressFamily 43 = "AF_SMC"
-showAddressFamily 44 = "AF_MAX"
-showAddressFamily i = "AddressFamily #" ++ (show i)
+data MessageType = NLMSG_NOOP
+                 | NLMSG_ERROR
+                 | NLMSG_DONE
+                 | NLMSG_OVERRUN
+                 | NLMSG_MIN_TYPE
+                 deriving (Eq, Enum, Show)
 
+data RouteMessageType = RTM_BASE
+                      | RTM_NEWLINK
+                      | RTM_DELLINK
+                      | RTM_GETLINK
+                      | RTM_SETLINK
+                      | RTM_NEWADDR
+                      | RTM_DELADDR
+                      | RTM_GETADDR
+                      | RTM_NEWROUTE
+                      | RTM_DELROUTE
+                      | RTM_GETROUTE
+                      | RTM_NEWNEIGH
+                      | RTM_DELNEIGH
+                      | RTM_GETNEIGH
+                      | RTM_NEWRULE
+                      | RTM_DELRULE
+                      | RTM_GETRULE
+                      | RTM_NEWQDISC
+                      | RTM_DELQDISC
+                      | RTM_GETQDISC
+                      | RTM_NEWTCLASS
+                      | RTM_DELTCLASS
+                      | RTM_GETTCLASS
+                      | RTM_NEWTFILTER
+                      | RTM_DELTFILTER
+                      | RTM_GETTFILTER
+                      | RTM_NEWACTION
+                      | RTM_DELACTION
+                      | RTM_GETACTION
+                      | RTM_NEWPREFIX
+                      | RTM_GETMULTICAST
+                      | RTM_GETANYCAST
+                      | RTM_NEWNEIGHTBL
+                      | RTM_GETNEIGHTBL
+                      | RTM_SETNEIGHTBL
+                      | RTM_NEWNDUSEROPT
+                      | RTM_NEWADDRLABEL
+                      | RTM_DELADDRLABEL
+                      | RTM_GETADDRLABEL
+                      | RTM_GETDCB
+                      | RTM_SETDCB
+                      | RTM_NEWNETCONF
+                      | RTM_DELNETCONF
+                      | RTM_GETNETCONF
+                      | RTM_NEWMDB
+                      | RTM_DELMDB
+                      | RTM_GETMDB
+                      | RTM_NEWNSID
+                      | RTM_DELNSID
+                      | RTM_GETNSID
+                      | RTM_NEWSTATS
+                      | RTM_GETSTATS
+                      | RTM_NEWCACHEREPORT
+                      deriving (Eq, Enum, Show)
 
-eAF_UNSPEC :: (Num a) => a
-eAF_UNSPEC = 0
-eAF_FILE :: (Num a) => a
-eAF_FILE = 1
-eAF_LOCAL :: (Num a) => a
-eAF_LOCAL = 1
-eAF_UNIX :: (Num a) => a
-eAF_UNIX = 1
-eAF_INET :: (Num a) => a
-eAF_INET = 2
-eAF_AX25 :: (Num a) => a
-eAF_AX25 = 3
-eAF_IPX :: (Num a) => a
-eAF_IPX = 4
-eAF_APPLETALK :: (Num a) => a
-eAF_APPLETALK = 5
-eAF_NETROM :: (Num a) => a
-eAF_NETROM = 6
-eAF_BRIDGE :: (Num a) => a
-eAF_BRIDGE = 7
-eAF_ATMPVC :: (Num a) => a
-eAF_ATMPVC = 8
-eAF_X25 :: (Num a) => a
-eAF_X25 = 9
-eAF_INET6 :: (Num a) => a
-eAF_INET6 = 10
-eAF_ROSE :: (Num a) => a
-eAF_ROSE = 11
-eAF_DECnet :: (Num a) => a
-eAF_DECnet = 12
-eAF_NETBEUI :: (Num a) => a
-eAF_NETBEUI = 13
-eAF_SECURITY :: (Num a) => a
-eAF_SECURITY = 14
-eAF_KEY :: (Num a) => a
-eAF_KEY = 15
-eAF_NETLINK :: (Num a) => a
-eAF_NETLINK = 16
-eAF_ROUTE :: (Num a) => a
-eAF_ROUTE = 16
-eAF_PACKET :: (Num a) => a
-eAF_PACKET = 17
-eAF_ASH :: (Num a) => a
-eAF_ASH = 18
-eAF_ECONET :: (Num a) => a
-eAF_ECONET = 19
-eAF_ATMSVC :: (Num a) => a
-eAF_ATMSVC = 20
-eAF_RDS :: (Num a) => a
-eAF_RDS = 21
-eAF_SNA :: (Num a) => a
-eAF_SNA = 22
-eAF_IRDA :: (Num a) => a
-eAF_IRDA = 23
-eAF_PPPOX :: (Num a) => a
-eAF_PPPOX = 24
-eAF_WANPIPE :: (Num a) => a
-eAF_WANPIPE = 25
-eAF_LLC :: (Num a) => a
-eAF_LLC = 26
-eAF_IB :: (Num a) => a
-eAF_IB = 27
-eAF_MPLS :: (Num a) => a
-eAF_MPLS = 28
-eAF_CAN :: (Num a) => a
-eAF_CAN = 29
-eAF_TIPC :: (Num a) => a
-eAF_TIPC = 30
-eAF_BLUETOOTH :: (Num a) => a
-eAF_BLUETOOTH = 31
-eAF_IUCV :: (Num a) => a
-eAF_IUCV = 32
-eAF_RXRPC :: (Num a) => a
-eAF_RXRPC = 33
-eAF_ISDN :: (Num a) => a
-eAF_ISDN = 34
-eAF_PHONET :: (Num a) => a
-eAF_PHONET = 35
-eAF_IEEE802154 :: (Num a) => a
-eAF_IEEE802154 = 36
-eAF_CAIF :: (Num a) => a
-eAF_CAIF = 37
-eAF_ALG :: (Num a) => a
-eAF_ALG = 38
-eAF_NFC :: (Num a) => a
-eAF_NFC = 39
-eAF_VSOCK :: (Num a) => a
-eAF_VSOCK = 40
-eAF_KCM :: (Num a) => a
-eAF_KCM = 41
-eAF_QIPCRTR :: (Num a) => a
-eAF_QIPCRTR = 42
-eAF_SMC :: (Num a) => a
-eAF_SMC = 43
-eAF_MAX :: (Num a) => a
-eAF_MAX = 44
-newtype MessageType = MessageType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showMessageType :: (Num a) => (Show a) => (Eq a) => a -> String
-showMessageType 1 = "NLMSG_NOOP"
-showMessageType 2 = "NLMSG_ERROR"
-showMessageType 3 = "NLMSG_DONE"
-showMessageType 4 = "NLMSG_OVERRUN"
-showMessageType 16 = "NLMSG_MIN_TYPE"
-showMessageType 17 = "RTM_DELLINK"
-showMessageType 18 = "RTM_GETLINK"
-showMessageType 19 = "RTM_SETLINK"
-showMessageType 20 = "RTM_NEWADDR"
-showMessageType 21 = "RTM_DELADDR"
-showMessageType 22 = "RTM_GETADDR"
-showMessageType 24 = "RTM_NEWROUTE"
-showMessageType 25 = "RTM_DELROUTE"
-showMessageType 26 = "RTM_GETROUTE"
-showMessageType 28 = "RTM_NEWNEIGH"
-showMessageType 29 = "RTM_DELNEIGH"
-showMessageType 30 = "RTM_GETNEIGH"
-showMessageType 32 = "RTM_NEWRULE"
-showMessageType 33 = "RTM_DELRULE"
-showMessageType 34 = "RTM_GETRULE"
-showMessageType 36 = "RTM_NEWQDISC"
-showMessageType 37 = "RTM_DELQDISC"
-showMessageType 38 = "RTM_GETQDISC"
-showMessageType 40 = "RTM_NEWTCLASS"
-showMessageType 41 = "RTM_DELTCLASS"
-showMessageType 42 = "RTM_GETTCLASS"
-showMessageType 44 = "RTM_NEWTFILTER"
-showMessageType 45 = "RTM_DELTFILTER"
-showMessageType 46 = "RTM_GETTFILTER"
-showMessageType 48 = "RTM_NEWACTION"
-showMessageType 49 = "RTM_DELACTION"
-showMessageType 50 = "RTM_GETACTION"
-showMessageType 52 = "RTM_NEWPREFIX"
-showMessageType 58 = "RTM_GETMULTICAST"
-showMessageType 62 = "RTM_GETANYCAST"
-showMessageType 64 = "RTM_NEWNEIGHTBL"
-showMessageType 66 = "RTM_GETNEIGHTBL"
-showMessageType 67 = "RTM_SETNEIGHTBL"
-showMessageType 68 = "RTM_NEWNDUSEROPT"
-showMessageType 72 = "RTM_NEWADDRLABEL"
-showMessageType 73 = "RTM_DELADDRLABEL"
-showMessageType 74 = "RTM_GETADDRLABEL"
-showMessageType 78 = "RTM_GETDCB"
-showMessageType 79 = "RTM_SETDCB"
-showMessageType 80 = "RTM_NEWNETCONF"
-showMessageType 81 = "RTM_DELNETCONF"
-showMessageType 82 = "RTM_GETNETCONF"
-showMessageType 84 = "RTM_NEWMDB"
-showMessageType 85 = "RTM_DELMDB"
-showMessageType 86 = "RTM_GETMDB"
-showMessageType 88 = "RTM_NEWNSID"
-showMessageType 89 = "RTM_DELNSID"
-showMessageType 90 = "RTM_GETNSID"
-showMessageType 92 = "RTM_NEWSTATS"
-showMessageType 94 = "RTM_GETSTATS"
-showMessageType 96 = "RTM_NEWCACHEREPORT"
-showMessageType i = "MessageType #" ++ (show i)
-
-
-eNLMSG_NOOP :: (Num a) => a
-eNLMSG_NOOP = 1
-eNLMSG_ERROR :: (Num a) => a
-eNLMSG_ERROR = 2
-eNLMSG_DONE :: (Num a) => a
-eNLMSG_DONE = 3
-eNLMSG_OVERRUN :: (Num a) => a
-eNLMSG_OVERRUN = 4
-eNLMSG_MIN_TYPE :: (Num a) => a
-eNLMSG_MIN_TYPE = 16
-eRTM_BASE :: (Num a) => a
-eRTM_BASE = 16
-eRTM_NEWLINK :: (Num a) => a
-eRTM_NEWLINK = 16
-eRTM_DELLINK :: (Num a) => a
-eRTM_DELLINK = 17
-eRTM_GETLINK :: (Num a) => a
-eRTM_GETLINK = 18
-eRTM_SETLINK :: (Num a) => a
-eRTM_SETLINK = 19
-eRTM_NEWADDR :: (Num a) => a
-eRTM_NEWADDR = 20
-eRTM_DELADDR :: (Num a) => a
-eRTM_DELADDR = 21
-eRTM_GETADDR :: (Num a) => a
-eRTM_GETADDR = 22
-eRTM_NEWROUTE :: (Num a) => a
-eRTM_NEWROUTE = 24
-eRTM_DELROUTE :: (Num a) => a
-eRTM_DELROUTE = 25
-eRTM_GETROUTE :: (Num a) => a
-eRTM_GETROUTE = 26
-eRTM_NEWNEIGH :: (Num a) => a
-eRTM_NEWNEIGH = 28
-eRTM_DELNEIGH :: (Num a) => a
-eRTM_DELNEIGH = 29
-eRTM_GETNEIGH :: (Num a) => a
-eRTM_GETNEIGH = 30
-eRTM_NEWRULE :: (Num a) => a
-eRTM_NEWRULE = 32
-eRTM_DELRULE :: (Num a) => a
-eRTM_DELRULE = 33
-eRTM_GETRULE :: (Num a) => a
-eRTM_GETRULE = 34
-eRTM_NEWQDISC :: (Num a) => a
-eRTM_NEWQDISC = 36
-eRTM_DELQDISC :: (Num a) => a
-eRTM_DELQDISC = 37
-eRTM_GETQDISC :: (Num a) => a
-eRTM_GETQDISC = 38
-eRTM_NEWTCLASS :: (Num a) => a
-eRTM_NEWTCLASS = 40
-eRTM_DELTCLASS :: (Num a) => a
-eRTM_DELTCLASS = 41
-eRTM_GETTCLASS :: (Num a) => a
-eRTM_GETTCLASS = 42
-eRTM_NEWTFILTER :: (Num a) => a
-eRTM_NEWTFILTER = 44
-eRTM_DELTFILTER :: (Num a) => a
-eRTM_DELTFILTER = 45
-eRTM_GETTFILTER :: (Num a) => a
-eRTM_GETTFILTER = 46
-eRTM_NEWACTION :: (Num a) => a
-eRTM_NEWACTION = 48
-eRTM_DELACTION :: (Num a) => a
-eRTM_DELACTION = 49
-eRTM_GETACTION :: (Num a) => a
-eRTM_GETACTION = 50
-eRTM_NEWPREFIX :: (Num a) => a
-eRTM_NEWPREFIX = 52
-eRTM_GETMULTICAST :: (Num a) => a
-eRTM_GETMULTICAST = 58
-eRTM_GETANYCAST :: (Num a) => a
-eRTM_GETANYCAST = 62
-eRTM_NEWNEIGHTBL :: (Num a) => a
-eRTM_NEWNEIGHTBL = 64
-eRTM_GETNEIGHTBL :: (Num a) => a
-eRTM_GETNEIGHTBL = 66
-eRTM_SETNEIGHTBL :: (Num a) => a
-eRTM_SETNEIGHTBL = 67
-eRTM_NEWNDUSEROPT :: (Num a) => a
-eRTM_NEWNDUSEROPT = 68
-eRTM_NEWADDRLABEL :: (Num a) => a
-eRTM_NEWADDRLABEL = 72
-eRTM_DELADDRLABEL :: (Num a) => a
-eRTM_DELADDRLABEL = 73
-eRTM_GETADDRLABEL :: (Num a) => a
-eRTM_GETADDRLABEL = 74
-eRTM_GETDCB :: (Num a) => a
-eRTM_GETDCB = 78
-eRTM_SETDCB :: (Num a) => a
-eRTM_SETDCB = 79
-eRTM_NEWNETCONF :: (Num a) => a
-eRTM_NEWNETCONF = 80
-eRTM_DELNETCONF :: (Num a) => a
-eRTM_DELNETCONF = 81
-eRTM_GETNETCONF :: (Num a) => a
-eRTM_GETNETCONF = 82
-eRTM_NEWMDB :: (Num a) => a
-eRTM_NEWMDB = 84
-eRTM_DELMDB :: (Num a) => a
-eRTM_DELMDB = 85
-eRTM_GETMDB :: (Num a) => a
-eRTM_GETMDB = 86
-eRTM_NEWNSID :: (Num a) => a
-eRTM_NEWNSID = 88
-eRTM_DELNSID :: (Num a) => a
-eRTM_DELNSID = 89
-eRTM_GETNSID :: (Num a) => a
-eRTM_GETNSID = 90
-eRTM_NEWSTATS :: (Num a) => a
-eRTM_NEWSTATS = 92
-eRTM_GETSTATS :: (Num a) => a
-eRTM_GETSTATS = 94
-eRTM_NEWCACHEREPORT :: (Num a) => a
-eRTM_NEWCACHEREPORT = 96
 newtype MessageFlags = MessageFlags Int deriving (Bits, Eq, Enum, Integral, Num, Ord, Real, Show)
 
 fNLM_F_REQUEST :: (Num a, Bits a) => a
@@ -363,206 +150,73 @@ fNLM_F_CREATE :: (Num a, Bits a) => a
 fNLM_F_CREATE = 1024
 fNLM_F_APPEND :: (Num a, Bits a) => a
 fNLM_F_APPEND = 2048
-newtype LinkType = LinkType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
+data LinkType = ARPHRD_NETROM
+              | ARPHRD_ETHER
+              | ARPHRD_EETHER
+              | ARPHRD_AX25
+              | ARPHRD_PRONET
+              | ARPHRD_CHAOS
+              | ARPHRD_IEEE802
+              | ARPHRD_ARCNET
+              | ARPHRD_APPLETLK
+              | ARPHRD_DLCI
+              | ARPHRD_ATM
+              | ARPHRD_METRICOM
+              | ARPHRD_IEEE1394
+              | ARPHRD_EUI64
+              | ARPHRD_INFINIBAND
+              | ARPHRD_SLIP
+              | ARPHRD_CSLIP
+              | ARPHRD_SLIP6
+              | ARPHRD_CSLIP6
+              | ARPHRD_RSRVD
+              | ARPHRD_ADAPT
+              | ARPHRD_ROSE
+              | ARPHRD_X25
+              | ARPHRD_HWX25
+              | ARPHRD_CAN
+              | ARPHRD_PPP
+              | ARPHRD_CISCO
+              | ARPHRD_HDLC
+              | ARPHRD_LAPB
+              | ARPHRD_DDCMP
+              | ARPHRD_RAWHDLC
+              | ARPHRD_RAWIP
+              | ARPHRD_TUNNEL
+              | ARPHRD_TUNNEL6
+              | ARPHRD_FRAD
+              | ARPHRD_SKIP
+              | ARPHRD_LOOPBACK
+              | ARPHRD_LOCALTLK
+              | ARPHRD_FDDI
+              | ARPHRD_BIF
+              | ARPHRD_SIT
+              | ARPHRD_IPDDP
+              | ARPHRD_IPGRE
+              | ARPHRD_PIMREG
+              | ARPHRD_HIPPI
+              | ARPHRD_ASH
+              | ARPHRD_ECONET
+              | ARPHRD_IRDA
+              | ARPHRD_FCPP
+              | ARPHRD_FCAL
+              | ARPHRD_FCPL
+              | ARPHRD_FCFABRIC
+              | ARPHRD_IEEE802_TR
+              | ARPHRD_IEEE80211
+              | ARPHRD_IEEE80211_PRISM
+              | ARPHRD_IEEE80211_RADIOTAP
+              | ARPHRD_IEEE802154
+              | ARPHRD_IEEE802154_MONITOR
+              | ARPHRD_PHONET
+              | ARPHRD_PHONET_PIPE
+              | ARPHRD_CAIF
+              | ARPHRD_IP6GRE
+              | ARPHRD_NETLINK
+              | ARPHRD_6LOWPAN
+              | ARPHRD_VSOCKMON
+              deriving (Eq, Enum, Show)
 
-showLinkType :: (Num a) => (Show a) => (Eq a) => a -> String
-showLinkType 0 = "ARPHRD_NETROM"
-showLinkType 1 = "ARPHRD_ETHER"
-showLinkType 2 = "ARPHRD_EETHER"
-showLinkType 3 = "ARPHRD_AX25"
-showLinkType 4 = "ARPHRD_PRONET"
-showLinkType 5 = "ARPHRD_CHAOS"
-showLinkType 6 = "ARPHRD_IEEE802"
-showLinkType 7 = "ARPHRD_ARCNET"
-showLinkType 8 = "ARPHRD_APPLETLK"
-showLinkType 15 = "ARPHRD_DLCI"
-showLinkType 19 = "ARPHRD_ATM"
-showLinkType 23 = "ARPHRD_METRICOM"
-showLinkType 24 = "ARPHRD_IEEE1394"
-showLinkType 27 = "ARPHRD_EUI64"
-showLinkType 32 = "ARPHRD_INFINIBAND"
-showLinkType 256 = "ARPHRD_SLIP"
-showLinkType 257 = "ARPHRD_CSLIP"
-showLinkType 258 = "ARPHRD_SLIP6"
-showLinkType 259 = "ARPHRD_CSLIP6"
-showLinkType 260 = "ARPHRD_RSRVD"
-showLinkType 264 = "ARPHRD_ADAPT"
-showLinkType 270 = "ARPHRD_ROSE"
-showLinkType 271 = "ARPHRD_X25"
-showLinkType 272 = "ARPHRD_HWX25"
-showLinkType 280 = "ARPHRD_CAN"
-showLinkType 512 = "ARPHRD_PPP"
-showLinkType 513 = "ARPHRD_CISCO"
-showLinkType 516 = "ARPHRD_LAPB"
-showLinkType 517 = "ARPHRD_DDCMP"
-showLinkType 518 = "ARPHRD_RAWHDLC"
-showLinkType 519 = "ARPHRD_RAWIP"
-showLinkType 768 = "ARPHRD_TUNNEL"
-showLinkType 769 = "ARPHRD_TUNNEL6"
-showLinkType 770 = "ARPHRD_FRAD"
-showLinkType 771 = "ARPHRD_SKIP"
-showLinkType 772 = "ARPHRD_LOOPBACK"
-showLinkType 773 = "ARPHRD_LOCALTLK"
-showLinkType 774 = "ARPHRD_FDDI"
-showLinkType 775 = "ARPHRD_BIF"
-showLinkType 776 = "ARPHRD_SIT"
-showLinkType 777 = "ARPHRD_IPDDP"
-showLinkType 778 = "ARPHRD_IPGRE"
-showLinkType 779 = "ARPHRD_PIMREG"
-showLinkType 780 = "ARPHRD_HIPPI"
-showLinkType 781 = "ARPHRD_ASH"
-showLinkType 782 = "ARPHRD_ECONET"
-showLinkType 783 = "ARPHRD_IRDA"
-showLinkType 784 = "ARPHRD_FCPP"
-showLinkType 785 = "ARPHRD_FCAL"
-showLinkType 786 = "ARPHRD_FCPL"
-showLinkType 787 = "ARPHRD_FCFABRIC"
-showLinkType 800 = "ARPHRD_IEEE802_TR"
-showLinkType 801 = "ARPHRD_IEEE80211"
-showLinkType 802 = "ARPHRD_IEEE80211_PRISM"
-showLinkType 803 = "ARPHRD_IEEE80211_RADIOTAP"
-showLinkType 804 = "ARPHRD_IEEE802154"
-showLinkType 805 = "ARPHRD_IEEE802154_MONITOR"
-showLinkType 820 = "ARPHRD_PHONET"
-showLinkType 821 = "ARPHRD_PHONET_PIPE"
-showLinkType 822 = "ARPHRD_CAIF"
-showLinkType 823 = "ARPHRD_IP6GRE"
-showLinkType 824 = "ARPHRD_NETLINK"
-showLinkType 825 = "ARPHRD_6LOWPAN"
-showLinkType 826 = "ARPHRD_VSOCKMON"
-showLinkType i = "LinkType #" ++ (show i)
-
-
-eARPHRD_NETROM :: (Num a) => a
-eARPHRD_NETROM = 0
-eARPHRD_ETHER :: (Num a) => a
-eARPHRD_ETHER = 1
-eARPHRD_EETHER :: (Num a) => a
-eARPHRD_EETHER = 2
-eARPHRD_AX25 :: (Num a) => a
-eARPHRD_AX25 = 3
-eARPHRD_PRONET :: (Num a) => a
-eARPHRD_PRONET = 4
-eARPHRD_CHAOS :: (Num a) => a
-eARPHRD_CHAOS = 5
-eARPHRD_IEEE802 :: (Num a) => a
-eARPHRD_IEEE802 = 6
-eARPHRD_ARCNET :: (Num a) => a
-eARPHRD_ARCNET = 7
-eARPHRD_APPLETLK :: (Num a) => a
-eARPHRD_APPLETLK = 8
-eARPHRD_DLCI :: (Num a) => a
-eARPHRD_DLCI = 15
-eARPHRD_ATM :: (Num a) => a
-eARPHRD_ATM = 19
-eARPHRD_METRICOM :: (Num a) => a
-eARPHRD_METRICOM = 23
-eARPHRD_IEEE1394 :: (Num a) => a
-eARPHRD_IEEE1394 = 24
-eARPHRD_EUI64 :: (Num a) => a
-eARPHRD_EUI64 = 27
-eARPHRD_INFINIBAND :: (Num a) => a
-eARPHRD_INFINIBAND = 32
-eARPHRD_SLIP :: (Num a) => a
-eARPHRD_SLIP = 256
-eARPHRD_CSLIP :: (Num a) => a
-eARPHRD_CSLIP = 257
-eARPHRD_SLIP6 :: (Num a) => a
-eARPHRD_SLIP6 = 258
-eARPHRD_CSLIP6 :: (Num a) => a
-eARPHRD_CSLIP6 = 259
-eARPHRD_RSRVD :: (Num a) => a
-eARPHRD_RSRVD = 260
-eARPHRD_ADAPT :: (Num a) => a
-eARPHRD_ADAPT = 264
-eARPHRD_ROSE :: (Num a) => a
-eARPHRD_ROSE = 270
-eARPHRD_X25 :: (Num a) => a
-eARPHRD_X25 = 271
-eARPHRD_HWX25 :: (Num a) => a
-eARPHRD_HWX25 = 272
-eARPHRD_CAN :: (Num a) => a
-eARPHRD_CAN = 280
-eARPHRD_PPP :: (Num a) => a
-eARPHRD_PPP = 512
-eARPHRD_CISCO :: (Num a) => a
-eARPHRD_CISCO = 513
-eARPHRD_HDLC :: (Num a) => a
-eARPHRD_HDLC = 513
-eARPHRD_LAPB :: (Num a) => a
-eARPHRD_LAPB = 516
-eARPHRD_DDCMP :: (Num a) => a
-eARPHRD_DDCMP = 517
-eARPHRD_RAWHDLC :: (Num a) => a
-eARPHRD_RAWHDLC = 518
-eARPHRD_RAWIP :: (Num a) => a
-eARPHRD_RAWIP = 519
-eARPHRD_TUNNEL :: (Num a) => a
-eARPHRD_TUNNEL = 768
-eARPHRD_TUNNEL6 :: (Num a) => a
-eARPHRD_TUNNEL6 = 769
-eARPHRD_FRAD :: (Num a) => a
-eARPHRD_FRAD = 770
-eARPHRD_SKIP :: (Num a) => a
-eARPHRD_SKIP = 771
-eARPHRD_LOOPBACK :: (Num a) => a
-eARPHRD_LOOPBACK = 772
-eARPHRD_LOCALTLK :: (Num a) => a
-eARPHRD_LOCALTLK = 773
-eARPHRD_FDDI :: (Num a) => a
-eARPHRD_FDDI = 774
-eARPHRD_BIF :: (Num a) => a
-eARPHRD_BIF = 775
-eARPHRD_SIT :: (Num a) => a
-eARPHRD_SIT = 776
-eARPHRD_IPDDP :: (Num a) => a
-eARPHRD_IPDDP = 777
-eARPHRD_IPGRE :: (Num a) => a
-eARPHRD_IPGRE = 778
-eARPHRD_PIMREG :: (Num a) => a
-eARPHRD_PIMREG = 779
-eARPHRD_HIPPI :: (Num a) => a
-eARPHRD_HIPPI = 780
-eARPHRD_ASH :: (Num a) => a
-eARPHRD_ASH = 781
-eARPHRD_ECONET :: (Num a) => a
-eARPHRD_ECONET = 782
-eARPHRD_IRDA :: (Num a) => a
-eARPHRD_IRDA = 783
-eARPHRD_FCPP :: (Num a) => a
-eARPHRD_FCPP = 784
-eARPHRD_FCAL :: (Num a) => a
-eARPHRD_FCAL = 785
-eARPHRD_FCPL :: (Num a) => a
-eARPHRD_FCPL = 786
-eARPHRD_FCFABRIC :: (Num a) => a
-eARPHRD_FCFABRIC = 787
-eARPHRD_IEEE802_TR :: (Num a) => a
-eARPHRD_IEEE802_TR = 800
-eARPHRD_IEEE80211 :: (Num a) => a
-eARPHRD_IEEE80211 = 801
-eARPHRD_IEEE80211_PRISM :: (Num a) => a
-eARPHRD_IEEE80211_PRISM = 802
-eARPHRD_IEEE80211_RADIOTAP :: (Num a) => a
-eARPHRD_IEEE80211_RADIOTAP = 803
-eARPHRD_IEEE802154 :: (Num a) => a
-eARPHRD_IEEE802154 = 804
-eARPHRD_IEEE802154_MONITOR :: (Num a) => a
-eARPHRD_IEEE802154_MONITOR = 805
-eARPHRD_PHONET :: (Num a) => a
-eARPHRD_PHONET = 820
-eARPHRD_PHONET_PIPE :: (Num a) => a
-eARPHRD_PHONET_PIPE = 821
-eARPHRD_CAIF :: (Num a) => a
-eARPHRD_CAIF = 822
-eARPHRD_IP6GRE :: (Num a) => a
-eARPHRD_IP6GRE = 823
-eARPHRD_NETLINK :: (Num a) => a
-eARPHRD_NETLINK = 824
-eARPHRD_6LOWPAN :: (Num a) => a
-eARPHRD_6LOWPAN = 825
-eARPHRD_VSOCKMON :: (Num a) => a
-eARPHRD_VSOCKMON = 826
 newtype LinkFlags = LinkFlags Int deriving (Bits, Eq, Enum, Integral, Num, Ord, Real, Show)
 
 fIFF_TUN :: (Num a, Bits a) => a
@@ -629,186 +283,66 @@ fIFF_DORMANT :: (Num a, Bits a) => a
 fIFF_DORMANT = 131072
 fIFF_ECHO :: (Num a, Bits a) => a
 fIFF_ECHO = 262144
-newtype LinkAttrType = LinkAttrType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
+data LinkAttrType = IFLA_UNSPEC
+                  | IFLA_ADDRESS
+                  | IFLA_BROADCAST
+                  | IFLA_IFNAME
+                  | IFLA_MTU
+                  | IFLA_LINK
+                  | IFLA_QDISC
+                  | IFLA_STATS
+                  | IFLA_COST
+                  | IFLA_PRIORITY
+                  | IFLA_MASTER
+                  | IFLA_WIRELESS
+                  | IFLA_PROTINFO
+                  | IFLA_TXQLEN
+                  | IFLA_MAP
+                  | IFLA_WEIGHT
+                  | IFLA_OPERSTATE
+                  | IFLA_LINKMODE
+                  | IFLA_LINKINFO
+                  | IFLA_NET_NS_PID
+                  | IFLA_IFALIAS
+                  | IFLA_NUM_VF
+                  | IFLA_VFINFO_LIST
+                  | IFLA_STATS64
+                  | IFLA_VF_PORTS
+                  | IFLA_PORT_SELF
+                  | IFLA_AF_SPEC
+                  | IFLA_GROUP
+                  | IFLA_NET_NS_FD
+                  | IFLA_EXT_MASK
+                  | IFLA_PROMISCUITY
+                  | IFLA_NUM_TX_QUEUES
+                  | IFLA_NUM_RX_QUEUES
+                  | IFLA_CARRIER
+                  | IFLA_PHYS_PORT_ID
+                  | IFLA_CARRIER_CHANGES
+                  | IFLA_PHYS_SWITCH_ID
+                  | IFLA_LINK_NETNSID
+                  | IFLA_PHYS_PORT_NAME
+                  | IFLA_PROTO_DOWN
+                  | IFLA_GSO_MAX_SEGS
+                  | IFLA_GSO_MAX_SIZE
+                  | IFLA_PAD
+                  | IFLA_XDP
+                  | IFLA_EVENT
+                  | IFLA_NEW_NETNSID
+                  | IFLA_IF_NETNSID
+                  | IFLA_CARRIER_UP_COUNT
+                  | IFLA_CARRIER_DOWN_COUNT
+                  | IFLA_NEW_IFINDEX
+                  deriving (Eq, Enum, Show)
 
-showLinkAttrType :: (Num a) => (Show a) => (Eq a) => a -> String
-showLinkAttrType 0 = "IFLA_UNSPEC"
-showLinkAttrType 1 = "IFLA_ADDRESS"
-showLinkAttrType 2 = "IFLA_BROADCAST"
-showLinkAttrType 3 = "IFLA_IFNAME"
-showLinkAttrType 4 = "IFLA_MTU"
-showLinkAttrType 5 = "IFLA_LINK"
-showLinkAttrType 6 = "IFLA_QDISC"
-showLinkAttrType 7 = "IFLA_STATS"
-showLinkAttrType 8 = "IFLA_COST"
-showLinkAttrType 9 = "IFLA_PRIORITY"
-showLinkAttrType 10 = "IFLA_MASTER"
-showLinkAttrType 11 = "IFLA_WIRELESS"
-showLinkAttrType 12 = "IFLA_PROTINFO"
-showLinkAttrType 13 = "IFLA_TXQLEN"
-showLinkAttrType 14 = "IFLA_MAP"
-showLinkAttrType 15 = "IFLA_WEIGHT"
-showLinkAttrType 16 = "IFLA_OPERSTATE"
-showLinkAttrType 17 = "IFLA_LINKMODE"
-showLinkAttrType 18 = "IFLA_LINKINFO"
-showLinkAttrType 19 = "IFLA_NET_NS_PID"
-showLinkAttrType 20 = "IFLA_IFALIAS"
-showLinkAttrType 21 = "IFLA_NUM_VF"
-showLinkAttrType 22 = "IFLA_VFINFO_LIST"
-showLinkAttrType 23 = "IFLA_STATS64"
-showLinkAttrType 24 = "IFLA_VF_PORTS"
-showLinkAttrType 25 = "IFLA_PORT_SELF"
-showLinkAttrType 26 = "IFLA_AF_SPEC"
-showLinkAttrType 27 = "IFLA_GROUP"
-showLinkAttrType 28 = "IFLA_NET_NS_FD"
-showLinkAttrType 29 = "IFLA_EXT_MASK"
-showLinkAttrType 30 = "IFLA_PROMISCUITY"
-showLinkAttrType 31 = "IFLA_NUM_TX_QUEUES"
-showLinkAttrType 32 = "IFLA_NUM_RX_QUEUES"
-showLinkAttrType 33 = "IFLA_CARRIER"
-showLinkAttrType 34 = "IFLA_PHYS_PORT_ID"
-showLinkAttrType 35 = "IFLA_CARRIER_CHANGES"
-showLinkAttrType 36 = "IFLA_PHYS_SWITCH_ID"
-showLinkAttrType 37 = "IFLA_LINK_NETNSID"
-showLinkAttrType 38 = "IFLA_PHYS_PORT_NAME"
-showLinkAttrType 39 = "IFLA_PROTO_DOWN"
-showLinkAttrType 40 = "IFLA_GSO_MAX_SEGS"
-showLinkAttrType 41 = "IFLA_GSO_MAX_SIZE"
-showLinkAttrType 42 = "IFLA_PAD"
-showLinkAttrType 43 = "IFLA_XDP"
-showLinkAttrType 44 = "IFLA_EVENT"
-showLinkAttrType 45 = "IFLA_NEW_NETNSID"
-showLinkAttrType 46 = "IFLA_IF_NETNSID"
-showLinkAttrType 47 = "IFLA_CARRIER_UP_COUNT"
-showLinkAttrType 48 = "IFLA_CARRIER_DOWN_COUNT"
-showLinkAttrType 49 = "IFLA_NEW_IFINDEX"
-showLinkAttrType i = "LinkAttrType #" ++ (show i)
+data LinkAttrInfoType = IFLA_INFO_UNSPEC
+                      | IFLA_INFO_KIND
+                      | IFLA_INFO_DATA
+                      | IFLA_INFO_XSTATS
+                      | IFLA_INFO_SLAVE_KIND
+                      | IFLA_INFO_SLAVE_DATA
+                      deriving (Eq, Enum, Show)
 
-
-eIFLA_UNSPEC :: (Num a) => a
-eIFLA_UNSPEC = 0
-eIFLA_ADDRESS :: (Num a) => a
-eIFLA_ADDRESS = 1
-eIFLA_BROADCAST :: (Num a) => a
-eIFLA_BROADCAST = 2
-eIFLA_IFNAME :: (Num a) => a
-eIFLA_IFNAME = 3
-eIFLA_MTU :: (Num a) => a
-eIFLA_MTU = 4
-eIFLA_LINK :: (Num a) => a
-eIFLA_LINK = 5
-eIFLA_QDISC :: (Num a) => a
-eIFLA_QDISC = 6
-eIFLA_STATS :: (Num a) => a
-eIFLA_STATS = 7
-eIFLA_COST :: (Num a) => a
-eIFLA_COST = 8
-eIFLA_PRIORITY :: (Num a) => a
-eIFLA_PRIORITY = 9
-eIFLA_MASTER :: (Num a) => a
-eIFLA_MASTER = 10
-eIFLA_WIRELESS :: (Num a) => a
-eIFLA_WIRELESS = 11
-eIFLA_PROTINFO :: (Num a) => a
-eIFLA_PROTINFO = 12
-eIFLA_TXQLEN :: (Num a) => a
-eIFLA_TXQLEN = 13
-eIFLA_MAP :: (Num a) => a
-eIFLA_MAP = 14
-eIFLA_WEIGHT :: (Num a) => a
-eIFLA_WEIGHT = 15
-eIFLA_OPERSTATE :: (Num a) => a
-eIFLA_OPERSTATE = 16
-eIFLA_LINKMODE :: (Num a) => a
-eIFLA_LINKMODE = 17
-eIFLA_LINKINFO :: (Num a) => a
-eIFLA_LINKINFO = 18
-eIFLA_NET_NS_PID :: (Num a) => a
-eIFLA_NET_NS_PID = 19
-eIFLA_IFALIAS :: (Num a) => a
-eIFLA_IFALIAS = 20
-eIFLA_NUM_VF :: (Num a) => a
-eIFLA_NUM_VF = 21
-eIFLA_VFINFO_LIST :: (Num a) => a
-eIFLA_VFINFO_LIST = 22
-eIFLA_STATS64 :: (Num a) => a
-eIFLA_STATS64 = 23
-eIFLA_VF_PORTS :: (Num a) => a
-eIFLA_VF_PORTS = 24
-eIFLA_PORT_SELF :: (Num a) => a
-eIFLA_PORT_SELF = 25
-eIFLA_AF_SPEC :: (Num a) => a
-eIFLA_AF_SPEC = 26
-eIFLA_GROUP :: (Num a) => a
-eIFLA_GROUP = 27
-eIFLA_NET_NS_FD :: (Num a) => a
-eIFLA_NET_NS_FD = 28
-eIFLA_EXT_MASK :: (Num a) => a
-eIFLA_EXT_MASK = 29
-eIFLA_PROMISCUITY :: (Num a) => a
-eIFLA_PROMISCUITY = 30
-eIFLA_NUM_TX_QUEUES :: (Num a) => a
-eIFLA_NUM_TX_QUEUES = 31
-eIFLA_NUM_RX_QUEUES :: (Num a) => a
-eIFLA_NUM_RX_QUEUES = 32
-eIFLA_CARRIER :: (Num a) => a
-eIFLA_CARRIER = 33
-eIFLA_PHYS_PORT_ID :: (Num a) => a
-eIFLA_PHYS_PORT_ID = 34
-eIFLA_CARRIER_CHANGES :: (Num a) => a
-eIFLA_CARRIER_CHANGES = 35
-eIFLA_PHYS_SWITCH_ID :: (Num a) => a
-eIFLA_PHYS_SWITCH_ID = 36
-eIFLA_LINK_NETNSID :: (Num a) => a
-eIFLA_LINK_NETNSID = 37
-eIFLA_PHYS_PORT_NAME :: (Num a) => a
-eIFLA_PHYS_PORT_NAME = 38
-eIFLA_PROTO_DOWN :: (Num a) => a
-eIFLA_PROTO_DOWN = 39
-eIFLA_GSO_MAX_SEGS :: (Num a) => a
-eIFLA_GSO_MAX_SEGS = 40
-eIFLA_GSO_MAX_SIZE :: (Num a) => a
-eIFLA_GSO_MAX_SIZE = 41
-eIFLA_PAD :: (Num a) => a
-eIFLA_PAD = 42
-eIFLA_XDP :: (Num a) => a
-eIFLA_XDP = 43
-eIFLA_EVENT :: (Num a) => a
-eIFLA_EVENT = 44
-eIFLA_NEW_NETNSID :: (Num a) => a
-eIFLA_NEW_NETNSID = 45
-eIFLA_IF_NETNSID :: (Num a) => a
-eIFLA_IF_NETNSID = 46
-eIFLA_CARRIER_UP_COUNT :: (Num a) => a
-eIFLA_CARRIER_UP_COUNT = 47
-eIFLA_CARRIER_DOWN_COUNT :: (Num a) => a
-eIFLA_CARRIER_DOWN_COUNT = 48
-eIFLA_NEW_IFINDEX :: (Num a) => a
-eIFLA_NEW_IFINDEX = 49
-newtype LinkAttrInfoType = LinkAttrInfoType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showLinkAttrInfoType :: (Num a) => (Show a) => (Eq a) => a -> String
-showLinkAttrInfoType 0 = "IFLA_INFO_UNSPEC"
-showLinkAttrInfoType 1 = "IFLA_INFO_KIND"
-showLinkAttrInfoType 2 = "IFLA_INFO_DATA"
-showLinkAttrInfoType 3 = "IFLA_INFO_XSTATS"
-showLinkAttrInfoType 4 = "IFLA_INFO_SLAVE_KIND"
-showLinkAttrInfoType 5 = "IFLA_INFO_SLAVE_DATA"
-showLinkAttrInfoType i = "LinkAttrInfoType #" ++ (show i)
-
-
-eIFLA_INFO_UNSPEC :: (Num a) => a
-eIFLA_INFO_UNSPEC = 0
-eIFLA_INFO_KIND :: (Num a) => a
-eIFLA_INFO_KIND = 1
-eIFLA_INFO_DATA :: (Num a) => a
-eIFLA_INFO_DATA = 2
-eIFLA_INFO_XSTATS :: (Num a) => a
-eIFLA_INFO_XSTATS = 3
-eIFLA_INFO_SLAVE_KIND :: (Num a) => a
-eIFLA_INFO_SLAVE_KIND = 4
-eIFLA_INFO_SLAVE_DATA :: (Num a) => a
-eIFLA_INFO_SLAVE_DATA = 5
 newtype AddrFlags = AddrFlags Int deriving (Bits, Eq, Enum, Integral, Num, Ord, Real, Show)
 
 fIFA_F_SECONDARY :: (Num a, Bits a) => a
@@ -837,198 +371,70 @@ fIFA_F_MCAUTOJOIN :: (Num a, Bits a) => a
 fIFA_F_MCAUTOJOIN = 1024
 fIFA_F_STABLE_PRIVACY :: (Num a, Bits a) => a
 fIFA_F_STABLE_PRIVACY = 2048
-newtype Scope = Scope Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
+data Scope = RT_SCOPE_UNIVERSE
+           | RT_SCOPE_SITE
+           | RT_SCOPE_LINK
+           | RT_SCOPE_HOST
+           | RT_SCOPE_NOWHERE
+           deriving (Eq, Enum, Show)
 
-showScope :: (Num a) => (Show a) => (Eq a) => a -> String
-showScope 0 = "RT_SCOPE_UNIVERSE"
-showScope 200 = "RT_SCOPE_SITE"
-showScope 253 = "RT_SCOPE_LINK"
-showScope 254 = "RT_SCOPE_HOST"
-showScope 255 = "RT_SCOPE_NOWHERE"
-showScope i = "Scope #" ++ (show i)
+data AddrAttrType = IFA_UNSPEC
+                  | IFA_ADDRESS
+                  | IFA_LOCAL
+                  | IFA_LABEL
+                  | IFA_BROADCAST
+                  | IFA_ANYCAST
+                  | IFA_CACHEINFO
+                  | IFA_MULTICAST
+                  | IFA_FLAGS
+                  | IFA_RT_PRIORITY
+                  deriving (Eq, Enum, Show)
 
+data RouteTableId = RT_TABLE_UNSPEC
+                  | RT_TABLE_COMPAT
+                  | RT_TABLE_DEFAULT
+                  | RT_TABLE_MAIN
+                  | RT_TABLE_LOCAL
+                  | RT_TABLE_MAX
+                  deriving (Eq, Enum, Show)
 
-eRT_SCOPE_UNIVERSE :: (Num a) => a
-eRT_SCOPE_UNIVERSE = 0
-eRT_SCOPE_SITE :: (Num a) => a
-eRT_SCOPE_SITE = 200
-eRT_SCOPE_LINK :: (Num a) => a
-eRT_SCOPE_LINK = 253
-eRT_SCOPE_HOST :: (Num a) => a
-eRT_SCOPE_HOST = 254
-eRT_SCOPE_NOWHERE :: (Num a) => a
-eRT_SCOPE_NOWHERE = 255
-newtype AddrAttrType = AddrAttrType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
+data RouteProto = RTPROT_UNSPEC
+                | RTPROT_REDIRECT
+                | RTPROT_KERNEL
+                | RTPROT_BOOT
+                | RTPROT_STATIC
+                | RTPROT_GATED
+                | RTPROT_RA
+                | RTPROT_MRT
+                | RTPROT_ZEBRA
+                | RTPROT_BIRD
+                | RTPROT_DNROUTED
+                | RTPROT_XORP
+                | RTPROT_NTK
+                | RTPROT_DHCP
+                | RTPROT_MROUTED
+                | RTPROT_BABEL
+                | RTPROT_BGP
+                | RTPROT_ISIS
+                | RTPROT_OSPF
+                | RTPROT_RIP
+                | RTPROT_EIGRP
+                deriving (Eq, Enum, Show)
 
-showAddrAttrType :: (Num a) => (Show a) => (Eq a) => a -> String
-showAddrAttrType 0 = "IFA_UNSPEC"
-showAddrAttrType 1 = "IFA_ADDRESS"
-showAddrAttrType 2 = "IFA_LOCAL"
-showAddrAttrType 3 = "IFA_LABEL"
-showAddrAttrType 4 = "IFA_BROADCAST"
-showAddrAttrType 5 = "IFA_ANYCAST"
-showAddrAttrType 6 = "IFA_CACHEINFO"
-showAddrAttrType 7 = "IFA_MULTICAST"
-showAddrAttrType 8 = "IFA_FLAGS"
-showAddrAttrType 9 = "IFA_RT_PRIORITY"
-showAddrAttrType i = "AddrAttrType #" ++ (show i)
+data RouteType = RTN_UNSPEC
+               | RTN_UNICAST
+               | RTN_LOCAL
+               | RTN_BROADCAST
+               | RTN_ANYCAST
+               | RTN_MULTICAST
+               | RTN_BLACKHOLE
+               | RTN_UNREACHABLE
+               | RTN_PROHIBIT
+               | RTN_THROW
+               | RTN_NAT
+               | RTN_XRESOLVE
+               deriving (Eq, Enum, Show)
 
-
-eIFA_UNSPEC :: (Num a) => a
-eIFA_UNSPEC = 0
-eIFA_ADDRESS :: (Num a) => a
-eIFA_ADDRESS = 1
-eIFA_LOCAL :: (Num a) => a
-eIFA_LOCAL = 2
-eIFA_LABEL :: (Num a) => a
-eIFA_LABEL = 3
-eIFA_BROADCAST :: (Num a) => a
-eIFA_BROADCAST = 4
-eIFA_ANYCAST :: (Num a) => a
-eIFA_ANYCAST = 5
-eIFA_CACHEINFO :: (Num a) => a
-eIFA_CACHEINFO = 6
-eIFA_MULTICAST :: (Num a) => a
-eIFA_MULTICAST = 7
-eIFA_FLAGS :: (Num a) => a
-eIFA_FLAGS = 8
-eIFA_RT_PRIORITY :: (Num a) => a
-eIFA_RT_PRIORITY = 9
-newtype RouteTableId = RouteTableId Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showRouteTableId :: (Num a) => (Show a) => (Eq a) => a -> String
-showRouteTableId 0 = "RT_TABLE_UNSPEC"
-showRouteTableId 252 = "RT_TABLE_COMPAT"
-showRouteTableId 253 = "RT_TABLE_DEFAULT"
-showRouteTableId 254 = "RT_TABLE_MAIN"
-showRouteTableId 255 = "RT_TABLE_LOCAL"
-showRouteTableId 4294967295 = "RT_TABLE_MAX"
-showRouteTableId i = "RouteTableId #" ++ (show i)
-
-
-eRT_TABLE_UNSPEC :: (Num a) => a
-eRT_TABLE_UNSPEC = 0
-eRT_TABLE_COMPAT :: (Num a) => a
-eRT_TABLE_COMPAT = 252
-eRT_TABLE_DEFAULT :: (Num a) => a
-eRT_TABLE_DEFAULT = 253
-eRT_TABLE_MAIN :: (Num a) => a
-eRT_TABLE_MAIN = 254
-eRT_TABLE_LOCAL :: (Num a) => a
-eRT_TABLE_LOCAL = 255
-eRT_TABLE_MAX :: (Num a) => a
-eRT_TABLE_MAX = 4294967295
-newtype RouteProto = RouteProto Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showRouteProto :: (Num a) => (Show a) => (Eq a) => a -> String
-showRouteProto 0 = "RTPROT_UNSPEC"
-showRouteProto 1 = "RTPROT_REDIRECT"
-showRouteProto 2 = "RTPROT_KERNEL"
-showRouteProto 3 = "RTPROT_BOOT"
-showRouteProto 4 = "RTPROT_STATIC"
-showRouteProto 8 = "RTPROT_GATED"
-showRouteProto 9 = "RTPROT_RA"
-showRouteProto 10 = "RTPROT_MRT"
-showRouteProto 11 = "RTPROT_ZEBRA"
-showRouteProto 12 = "RTPROT_BIRD"
-showRouteProto 13 = "RTPROT_DNROUTED"
-showRouteProto 14 = "RTPROT_XORP"
-showRouteProto 15 = "RTPROT_NTK"
-showRouteProto 16 = "RTPROT_DHCP"
-showRouteProto 17 = "RTPROT_MROUTED"
-showRouteProto 42 = "RTPROT_BABEL"
-showRouteProto 186 = "RTPROT_BGP"
-showRouteProto 187 = "RTPROT_ISIS"
-showRouteProto 188 = "RTPROT_OSPF"
-showRouteProto 189 = "RTPROT_RIP"
-showRouteProto 192 = "RTPROT_EIGRP"
-showRouteProto i = "RouteProto #" ++ (show i)
-
-
-eRTPROT_UNSPEC :: (Num a) => a
-eRTPROT_UNSPEC = 0
-eRTPROT_REDIRECT :: (Num a) => a
-eRTPROT_REDIRECT = 1
-eRTPROT_KERNEL :: (Num a) => a
-eRTPROT_KERNEL = 2
-eRTPROT_BOOT :: (Num a) => a
-eRTPROT_BOOT = 3
-eRTPROT_STATIC :: (Num a) => a
-eRTPROT_STATIC = 4
-eRTPROT_GATED :: (Num a) => a
-eRTPROT_GATED = 8
-eRTPROT_RA :: (Num a) => a
-eRTPROT_RA = 9
-eRTPROT_MRT :: (Num a) => a
-eRTPROT_MRT = 10
-eRTPROT_ZEBRA :: (Num a) => a
-eRTPROT_ZEBRA = 11
-eRTPROT_BIRD :: (Num a) => a
-eRTPROT_BIRD = 12
-eRTPROT_DNROUTED :: (Num a) => a
-eRTPROT_DNROUTED = 13
-eRTPROT_XORP :: (Num a) => a
-eRTPROT_XORP = 14
-eRTPROT_NTK :: (Num a) => a
-eRTPROT_NTK = 15
-eRTPROT_DHCP :: (Num a) => a
-eRTPROT_DHCP = 16
-eRTPROT_MROUTED :: (Num a) => a
-eRTPROT_MROUTED = 17
-eRTPROT_BABEL :: (Num a) => a
-eRTPROT_BABEL = 42
-eRTPROT_BGP :: (Num a) => a
-eRTPROT_BGP = 186
-eRTPROT_ISIS :: (Num a) => a
-eRTPROT_ISIS = 187
-eRTPROT_OSPF :: (Num a) => a
-eRTPROT_OSPF = 188
-eRTPROT_RIP :: (Num a) => a
-eRTPROT_RIP = 189
-eRTPROT_EIGRP :: (Num a) => a
-eRTPROT_EIGRP = 192
-newtype RouteType = RouteType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showRouteType :: (Num a) => (Show a) => (Eq a) => a -> String
-showRouteType 0 = "RTN_UNSPEC"
-showRouteType 1 = "RTN_UNICAST"
-showRouteType 2 = "RTN_LOCAL"
-showRouteType 3 = "RTN_BROADCAST"
-showRouteType 4 = "RTN_ANYCAST"
-showRouteType 5 = "RTN_MULTICAST"
-showRouteType 6 = "RTN_BLACKHOLE"
-showRouteType 7 = "RTN_UNREACHABLE"
-showRouteType 8 = "RTN_PROHIBIT"
-showRouteType 9 = "RTN_THROW"
-showRouteType 10 = "RTN_NAT"
-showRouteType 11 = "RTN_XRESOLVE"
-showRouteType i = "RouteType #" ++ (show i)
-
-
-eRTN_UNSPEC :: (Num a) => a
-eRTN_UNSPEC = 0
-eRTN_UNICAST :: (Num a) => a
-eRTN_UNICAST = 1
-eRTN_LOCAL :: (Num a) => a
-eRTN_LOCAL = 2
-eRTN_BROADCAST :: (Num a) => a
-eRTN_BROADCAST = 3
-eRTN_ANYCAST :: (Num a) => a
-eRTN_ANYCAST = 4
-eRTN_MULTICAST :: (Num a) => a
-eRTN_MULTICAST = 5
-eRTN_BLACKHOLE :: (Num a) => a
-eRTN_BLACKHOLE = 6
-eRTN_UNREACHABLE :: (Num a) => a
-eRTN_UNREACHABLE = 7
-eRTN_PROHIBIT :: (Num a) => a
-eRTN_PROHIBIT = 8
-eRTN_THROW :: (Num a) => a
-eRTN_THROW = 9
-eRTN_NAT :: (Num a) => a
-eRTN_NAT = 10
-eRTN_XRESOLVE :: (Num a) => a
-eRTN_XRESOLVE = 11
 newtype RouteFlags = RouteFlags Int deriving (Bits, Eq, Enum, Integral, Num, Ord, Real, Show)
 
 fRTM_F_NOTIFY :: (Num a, Bits a) => a
@@ -1043,144 +449,52 @@ fRTM_F_LOOKUP_TABLE :: (Num a, Bits a) => a
 fRTM_F_LOOKUP_TABLE = 4096
 fRTM_F_FIB_MATCH :: (Num a, Bits a) => a
 fRTM_F_FIB_MATCH = 8192
-newtype RouteAttrType = RouteAttrType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
+data RouteAttrType = RTA_UNSPEC
+                   | RTA_DST
+                   | RTA_SRC
+                   | RTA_IIF
+                   | RTA_OIF
+                   | RTA_GATEWAY
+                   | RTA_PRIORITY
+                   | RTA_PREFSRC
+                   | RTA_METRICS
+                   | RTA_MULTIPATH
+                   | RTA_PROTOINFO
+                   | RTA_FLOW
+                   | RTA_CACHEINFO
+                   | RTA_SESSION
+                   | RTA_MP_ALGO
+                   | RTA_TABLE
+                   | RTA_MARK
+                   | RTA_MFC_STATS
+                   | RTA_VIA
+                   | RTA_NEWDST
+                   | RTA_PREF
+                   | RTA_ENCAP_TYPE
+                   | RTA_ENCAP
+                   | RTA_EXPIRES
+                   | RTA_PAD
+                   | RTA_UID
+                   | RTA_TTL_PROPAGATE
+                   | RTA_IP_PROTO
+                   | RTA_SPORT
+                   | RTA_DPORT
+                   deriving (Eq, Enum, Show)
 
-showRouteAttrType :: (Num a) => (Show a) => (Eq a) => a -> String
-showRouteAttrType 0 = "RTA_UNSPEC"
-showRouteAttrType 1 = "RTA_DST"
-showRouteAttrType 2 = "RTA_SRC"
-showRouteAttrType 3 = "RTA_IIF"
-showRouteAttrType 4 = "RTA_OIF"
-showRouteAttrType 5 = "RTA_GATEWAY"
-showRouteAttrType 6 = "RTA_PRIORITY"
-showRouteAttrType 7 = "RTA_PREFSRC"
-showRouteAttrType 8 = "RTA_METRICS"
-showRouteAttrType 9 = "RTA_MULTIPATH"
-showRouteAttrType 10 = "RTA_PROTOINFO"
-showRouteAttrType 11 = "RTA_FLOW"
-showRouteAttrType 12 = "RTA_CACHEINFO"
-showRouteAttrType 13 = "RTA_SESSION"
-showRouteAttrType 14 = "RTA_MP_ALGO"
-showRouteAttrType 15 = "RTA_TABLE"
-showRouteAttrType 16 = "RTA_MARK"
-showRouteAttrType 17 = "RTA_MFC_STATS"
-showRouteAttrType 18 = "RTA_VIA"
-showRouteAttrType 19 = "RTA_NEWDST"
-showRouteAttrType 20 = "RTA_PREF"
-showRouteAttrType 21 = "RTA_ENCAP_TYPE"
-showRouteAttrType 22 = "RTA_ENCAP"
-showRouteAttrType 23 = "RTA_EXPIRES"
-showRouteAttrType 24 = "RTA_PAD"
-showRouteAttrType 25 = "RTA_UID"
-showRouteAttrType 26 = "RTA_TTL_PROPAGATE"
-showRouteAttrType 27 = "RTA_IP_PROTO"
-showRouteAttrType 28 = "RTA_SPORT"
-showRouteAttrType 29 = "RTA_DPORT"
-showRouteAttrType i = "RouteAttrType #" ++ (show i)
+data NeighAttrType = NDA_UNSPEC
+                   | NDA_DST
+                   | NDA_LLADDR
+                   | NDA_CACHEINFO
+                   | NDA_PROBES
+                   | NDA_VLAN
+                   | NDA_PORT
+                   | NDA_VNI
+                   | NDA_IFINDEX
+                   | NDA_MASTER
+                   | NDA_LINK_NETNSID
+                   | NDA_SRC_VNI
+                   deriving (Eq, Enum, Show)
 
-
-eRTA_UNSPEC :: (Num a) => a
-eRTA_UNSPEC = 0
-eRTA_DST :: (Num a) => a
-eRTA_DST = 1
-eRTA_SRC :: (Num a) => a
-eRTA_SRC = 2
-eRTA_IIF :: (Num a) => a
-eRTA_IIF = 3
-eRTA_OIF :: (Num a) => a
-eRTA_OIF = 4
-eRTA_GATEWAY :: (Num a) => a
-eRTA_GATEWAY = 5
-eRTA_PRIORITY :: (Num a) => a
-eRTA_PRIORITY = 6
-eRTA_PREFSRC :: (Num a) => a
-eRTA_PREFSRC = 7
-eRTA_METRICS :: (Num a) => a
-eRTA_METRICS = 8
-eRTA_MULTIPATH :: (Num a) => a
-eRTA_MULTIPATH = 9
-eRTA_PROTOINFO :: (Num a) => a
-eRTA_PROTOINFO = 10
-eRTA_FLOW :: (Num a) => a
-eRTA_FLOW = 11
-eRTA_CACHEINFO :: (Num a) => a
-eRTA_CACHEINFO = 12
-eRTA_SESSION :: (Num a) => a
-eRTA_SESSION = 13
-eRTA_MP_ALGO :: (Num a) => a
-eRTA_MP_ALGO = 14
-eRTA_TABLE :: (Num a) => a
-eRTA_TABLE = 15
-eRTA_MARK :: (Num a) => a
-eRTA_MARK = 16
-eRTA_MFC_STATS :: (Num a) => a
-eRTA_MFC_STATS = 17
-eRTA_VIA :: (Num a) => a
-eRTA_VIA = 18
-eRTA_NEWDST :: (Num a) => a
-eRTA_NEWDST = 19
-eRTA_PREF :: (Num a) => a
-eRTA_PREF = 20
-eRTA_ENCAP_TYPE :: (Num a) => a
-eRTA_ENCAP_TYPE = 21
-eRTA_ENCAP :: (Num a) => a
-eRTA_ENCAP = 22
-eRTA_EXPIRES :: (Num a) => a
-eRTA_EXPIRES = 23
-eRTA_PAD :: (Num a) => a
-eRTA_PAD = 24
-eRTA_UID :: (Num a) => a
-eRTA_UID = 25
-eRTA_TTL_PROPAGATE :: (Num a) => a
-eRTA_TTL_PROPAGATE = 26
-eRTA_IP_PROTO :: (Num a) => a
-eRTA_IP_PROTO = 27
-eRTA_SPORT :: (Num a) => a
-eRTA_SPORT = 28
-eRTA_DPORT :: (Num a) => a
-eRTA_DPORT = 29
-newtype NeighAttrType = NeighAttrType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showNeighAttrType :: (Num a) => (Show a) => (Eq a) => a -> String
-showNeighAttrType 0 = "NDA_UNSPEC"
-showNeighAttrType 1 = "NDA_DST"
-showNeighAttrType 2 = "NDA_LLADDR"
-showNeighAttrType 3 = "NDA_CACHEINFO"
-showNeighAttrType 4 = "NDA_PROBES"
-showNeighAttrType 5 = "NDA_VLAN"
-showNeighAttrType 6 = "NDA_PORT"
-showNeighAttrType 7 = "NDA_VNI"
-showNeighAttrType 8 = "NDA_IFINDEX"
-showNeighAttrType 9 = "NDA_MASTER"
-showNeighAttrType 10 = "NDA_LINK_NETNSID"
-showNeighAttrType 11 = "NDA_SRC_VNI"
-showNeighAttrType i = "NeighAttrType #" ++ (show i)
-
-
-eNDA_UNSPEC :: (Num a) => a
-eNDA_UNSPEC = 0
-eNDA_DST :: (Num a) => a
-eNDA_DST = 1
-eNDA_LLADDR :: (Num a) => a
-eNDA_LLADDR = 2
-eNDA_CACHEINFO :: (Num a) => a
-eNDA_CACHEINFO = 3
-eNDA_PROBES :: (Num a) => a
-eNDA_PROBES = 4
-eNDA_VLAN :: (Num a) => a
-eNDA_VLAN = 5
-eNDA_PORT :: (Num a) => a
-eNDA_PORT = 6
-eNDA_VNI :: (Num a) => a
-eNDA_VNI = 7
-eNDA_IFINDEX :: (Num a) => a
-eNDA_IFINDEX = 8
-eNDA_MASTER :: (Num a) => a
-eNDA_MASTER = 9
-eNDA_LINK_NETNSID :: (Num a) => a
-eNDA_LINK_NETNSID = 10
-eNDA_SRC_VNI :: (Num a) => a
-eNDA_SRC_VNI = 11
 newtype NeighStateFlags = NeighStateFlags Int deriving (Bits, Eq, Enum, Integral, Num, Ord, Real, Show)
 
 fNUD_NONE :: (Num a, Bits a) => a
@@ -1201,213 +515,77 @@ fNUD_NOARP :: (Num a, Bits a) => a
 fNUD_NOARP = 64
 fNUD_PERMANENT :: (Num a, Bits a) => a
 fNUD_PERMANENT = 128
-newtype VethAttrInfoType = VethAttrInfoType Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
+data VethAttrInfoType = VETH_INFO_UNSPEC
+                      | VETH_INFO_PEER
+                      deriving (Eq, Enum, Show)
 
-showVethAttrInfoType :: (Num a) => (Show a) => (Eq a) => a -> String
-showVethAttrInfoType 0 = "VETH_INFO_UNSPEC"
-showVethAttrInfoType 1 = "VETH_INFO_PEER"
-showVethAttrInfoType i = "VethAttrInfoType #" ++ (show i)
+data NetlinkFamily = NETLINK_ROUTE
+                   | NETLINK_ADD_MEMBERSHIP
+                   | NETLINK_UNUSED
+                   | NETLINK_DROP_MEMBERSHIP
+                   | NETLINK_USERSOCK
+                   | NETLINK_FIREWALL
+                   | NETLINK_PKTINFO
+                   | NETLINK_BROADCAST_ERROR
+                   | NETLINK_INET_DIAG
+                   | NETLINK_SOCK_DIAG
+                   | NETLINK_NFLOG
+                   | NETLINK_NO_ENOBUFS
+                   | NETLINK_RX_RING
+                   | NETLINK_XFRM
+                   | NETLINK_SELINUX
+                   | NETLINK_TX_RING
+                   | NETLINK_ISCSI
+                   | NETLINK_LISTEN_ALL_NSID
+                   | NETLINK_AUDIT
+                   | NETLINK_LIST_MEMBERSHIPS
+                   | NETLINK_CAP_ACK
+                   | NETLINK_FIB_LOOKUP
+                   | NETLINK_CONNECTOR
+                   | NETLINK_EXT_ACK
+                   | NETLINK_NETFILTER
+                   | NETLINK_IP6_FW
+                   | NETLINK_DNRTMSG
+                   | NETLINK_KOBJECT_UEVENT
+                   | NETLINK_GENERIC
+                   | NETLINK_SCSITRANSPORT
+                   | NETLINK_ECRYPTFS
+                   | NETLINK_RDMA
+                   | NETLINK_CRYPTO
+                   | NETLINK_SMC
+                   deriving (Eq, Enum, Show)
 
+data RtNetlinkGroups = RTNLGRP_NONE
+                     | RTNLGRP_LINK
+                     | RTNLGRP_NOTIFY
+                     | RTNLGRP_NEIGH
+                     | RTNLGRP_TC
+                     | RTNLGRP_IPV4_IFADDR
+                     | RTNLGRP_IPV4_MROUTE
+                     | RTNLGRP_IPV4_ROUTE
+                     | RTNLGRP_IPV4_RULE
+                     | RTNLGRP_IPV6_IFADDR
+                     | RTNLGRP_IPV6_MROUTE
+                     | RTNLGRP_IPV6_ROUTE
+                     | RTNLGRP_IPV6_IFINFO
+                     | RTNLGRP_DECnet_IFADDR
+                     | RTNLGRP_NOP2
+                     | RTNLGRP_DECnet_ROUTE
+                     | RTNLGRP_DECnet_RULE
+                     | RTNLGRP_NOP4
+                     | RTNLGRP_IPV6_PREFIX
+                     | RTNLGRP_IPV6_RULE
+                     | RTNLGRP_ND_USEROPT
+                     | RTNLGRP_PHONET_IFADDR
+                     | RTNLGRP_PHONET_ROUTE
+                     | RTNLGRP_DCB
+                     | RTNLGRP_IPV4_NETCONF
+                     | RTNLGRP_IPV6_NETCONF
+                     | RTNLGRP_MDB
+                     | RTNLGRP_MPLS_ROUTE
+                     | RTNLGRP_NSID
+                     | RTNLGRP_MPLS_NETCONF
+                     | RTNLGRP_IPV4_MROUTE_R
+                     | RTNLGRP_IPV6_MROUTE_R
+                     deriving (Eq, Enum, Show)
 
-eVETH_INFO_UNSPEC :: (Num a) => a
-eVETH_INFO_UNSPEC = 0
-eVETH_INFO_PEER :: (Num a) => a
-eVETH_INFO_PEER = 1
-newtype NetlinkFamily = NetlinkFamily Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showNetlinkFamily :: (Num a) => (Show a) => (Eq a) => a -> String
-showNetlinkFamily 0 = "NETLINK_ROUTE"
-showNetlinkFamily 1 = "NETLINK_ADD_MEMBERSHIP"
-showNetlinkFamily 2 = "NETLINK_DROP_MEMBERSHIP"
-showNetlinkFamily 3 = "NETLINK_FIREWALL"
-showNetlinkFamily 4 = "NETLINK_BROADCAST_ERROR"
-showNetlinkFamily 5 = "NETLINK_NFLOG"
-showNetlinkFamily 6 = "NETLINK_RX_RING"
-showNetlinkFamily 7 = "NETLINK_SELINUX"
-showNetlinkFamily 8 = "NETLINK_ISCSI"
-showNetlinkFamily 9 = "NETLINK_AUDIT"
-showNetlinkFamily 10 = "NETLINK_CAP_ACK"
-showNetlinkFamily 11 = "NETLINK_CONNECTOR"
-showNetlinkFamily 12 = "NETLINK_NETFILTER"
-showNetlinkFamily 13 = "NETLINK_IP6_FW"
-showNetlinkFamily 14 = "NETLINK_DNRTMSG"
-showNetlinkFamily 15 = "NETLINK_KOBJECT_UEVENT"
-showNetlinkFamily 16 = "NETLINK_GENERIC"
-showNetlinkFamily 18 = "NETLINK_SCSITRANSPORT"
-showNetlinkFamily 19 = "NETLINK_ECRYPTFS"
-showNetlinkFamily 20 = "NETLINK_RDMA"
-showNetlinkFamily 21 = "NETLINK_CRYPTO"
-showNetlinkFamily 22 = "NETLINK_SMC"
-showNetlinkFamily i = "NetlinkFamily #" ++ (show i)
-
-
-eNETLINK_ROUTE :: (Num a) => a
-eNETLINK_ROUTE = 0
-eNETLINK_ADD_MEMBERSHIP :: (Num a) => a
-eNETLINK_ADD_MEMBERSHIP = 1
-eNETLINK_UNUSED :: (Num a) => a
-eNETLINK_UNUSED = 1
-eNETLINK_DROP_MEMBERSHIP :: (Num a) => a
-eNETLINK_DROP_MEMBERSHIP = 2
-eNETLINK_USERSOCK :: (Num a) => a
-eNETLINK_USERSOCK = 2
-eNETLINK_FIREWALL :: (Num a) => a
-eNETLINK_FIREWALL = 3
-eNETLINK_PKTINFO :: (Num a) => a
-eNETLINK_PKTINFO = 3
-eNETLINK_BROADCAST_ERROR :: (Num a) => a
-eNETLINK_BROADCAST_ERROR = 4
-eNETLINK_INET_DIAG :: (Num a) => a
-eNETLINK_INET_DIAG = 4
-eNETLINK_SOCK_DIAG :: (Num a) => a
-eNETLINK_SOCK_DIAG = 4
-eNETLINK_NFLOG :: (Num a) => a
-eNETLINK_NFLOG = 5
-eNETLINK_NO_ENOBUFS :: (Num a) => a
-eNETLINK_NO_ENOBUFS = 5
-eNETLINK_RX_RING :: (Num a) => a
-eNETLINK_RX_RING = 6
-eNETLINK_XFRM :: (Num a) => a
-eNETLINK_XFRM = 6
-eNETLINK_SELINUX :: (Num a) => a
-eNETLINK_SELINUX = 7
-eNETLINK_TX_RING :: (Num a) => a
-eNETLINK_TX_RING = 7
-eNETLINK_ISCSI :: (Num a) => a
-eNETLINK_ISCSI = 8
-eNETLINK_LISTEN_ALL_NSID :: (Num a) => a
-eNETLINK_LISTEN_ALL_NSID = 8
-eNETLINK_AUDIT :: (Num a) => a
-eNETLINK_AUDIT = 9
-eNETLINK_LIST_MEMBERSHIPS :: (Num a) => a
-eNETLINK_LIST_MEMBERSHIPS = 9
-eNETLINK_CAP_ACK :: (Num a) => a
-eNETLINK_CAP_ACK = 10
-eNETLINK_FIB_LOOKUP :: (Num a) => a
-eNETLINK_FIB_LOOKUP = 10
-eNETLINK_CONNECTOR :: (Num a) => a
-eNETLINK_CONNECTOR = 11
-eNETLINK_EXT_ACK :: (Num a) => a
-eNETLINK_EXT_ACK = 11
-eNETLINK_NETFILTER :: (Num a) => a
-eNETLINK_NETFILTER = 12
-eNETLINK_IP6_FW :: (Num a) => a
-eNETLINK_IP6_FW = 13
-eNETLINK_DNRTMSG :: (Num a) => a
-eNETLINK_DNRTMSG = 14
-eNETLINK_KOBJECT_UEVENT :: (Num a) => a
-eNETLINK_KOBJECT_UEVENT = 15
-eNETLINK_GENERIC :: (Num a) => a
-eNETLINK_GENERIC = 16
-eNETLINK_SCSITRANSPORT :: (Num a) => a
-eNETLINK_SCSITRANSPORT = 18
-eNETLINK_ECRYPTFS :: (Num a) => a
-eNETLINK_ECRYPTFS = 19
-eNETLINK_RDMA :: (Num a) => a
-eNETLINK_RDMA = 20
-eNETLINK_CRYPTO :: (Num a) => a
-eNETLINK_CRYPTO = 21
-eNETLINK_SMC :: (Num a) => a
-eNETLINK_SMC = 22
-newtype RtNetlinkGroups = RtNetlinkGroups Int deriving (Eq, Enum, Integral, Num, Ord, Real, Show)
-
-showRtNetlinkGroups :: (Num a) => (Show a) => (Eq a) => a -> String
-showRtNetlinkGroups 0 = "RTNLGRP_NONE"
-showRtNetlinkGroups 1 = "RTNLGRP_LINK"
-showRtNetlinkGroups 2 = "RTNLGRP_NOTIFY"
-showRtNetlinkGroups 3 = "RTNLGRP_NEIGH"
-showRtNetlinkGroups 4 = "RTNLGRP_TC"
-showRtNetlinkGroups 5 = "RTNLGRP_IPV4_IFADDR"
-showRtNetlinkGroups 6 = "RTNLGRP_IPV4_MROUTE"
-showRtNetlinkGroups 7 = "RTNLGRP_IPV4_ROUTE"
-showRtNetlinkGroups 8 = "RTNLGRP_IPV4_RULE"
-showRtNetlinkGroups 9 = "RTNLGRP_IPV6_IFADDR"
-showRtNetlinkGroups 10 = "RTNLGRP_IPV6_MROUTE"
-showRtNetlinkGroups 11 = "RTNLGRP_IPV6_ROUTE"
-showRtNetlinkGroups 12 = "RTNLGRP_IPV6_IFINFO"
-showRtNetlinkGroups 13 = "RTNLGRP_DECnet_IFADDR"
-showRtNetlinkGroups 14 = "RTNLGRP_NOP2"
-showRtNetlinkGroups 15 = "RTNLGRP_DECnet_ROUTE"
-showRtNetlinkGroups 16 = "RTNLGRP_DECnet_RULE"
-showRtNetlinkGroups 17 = "RTNLGRP_NOP4"
-showRtNetlinkGroups 18 = "RTNLGRP_IPV6_PREFIX"
-showRtNetlinkGroups 19 = "RTNLGRP_IPV6_RULE"
-showRtNetlinkGroups 20 = "RTNLGRP_ND_USEROPT"
-showRtNetlinkGroups 21 = "RTNLGRP_PHONET_IFADDR"
-showRtNetlinkGroups 22 = "RTNLGRP_PHONET_ROUTE"
-showRtNetlinkGroups 23 = "RTNLGRP_DCB"
-showRtNetlinkGroups 24 = "RTNLGRP_IPV4_NETCONF"
-showRtNetlinkGroups 25 = "RTNLGRP_IPV6_NETCONF"
-showRtNetlinkGroups 26 = "RTNLGRP_MDB"
-showRtNetlinkGroups 27 = "RTNLGRP_MPLS_ROUTE"
-showRtNetlinkGroups 28 = "RTNLGRP_NSID"
-showRtNetlinkGroups 29 = "RTNLGRP_MPLS_NETCONF"
-showRtNetlinkGroups 30 = "RTNLGRP_IPV4_MROUTE_R"
-showRtNetlinkGroups 31 = "RTNLGRP_IPV6_MROUTE_R"
-showRtNetlinkGroups i = "RtNetlinkGroups #" ++ (show i)
-
-
-eRTNLGRP_NONE :: (Num a) => a
-eRTNLGRP_NONE = 0
-eRTNLGRP_LINK :: (Num a) => a
-eRTNLGRP_LINK = 1
-eRTNLGRP_NOTIFY :: (Num a) => a
-eRTNLGRP_NOTIFY = 2
-eRTNLGRP_NEIGH :: (Num a) => a
-eRTNLGRP_NEIGH = 3
-eRTNLGRP_TC :: (Num a) => a
-eRTNLGRP_TC = 4
-eRTNLGRP_IPV4_IFADDR :: (Num a) => a
-eRTNLGRP_IPV4_IFADDR = 5
-eRTNLGRP_IPV4_MROUTE :: (Num a) => a
-eRTNLGRP_IPV4_MROUTE = 6
-eRTNLGRP_IPV4_ROUTE :: (Num a) => a
-eRTNLGRP_IPV4_ROUTE = 7
-eRTNLGRP_IPV4_RULE :: (Num a) => a
-eRTNLGRP_IPV4_RULE = 8
-eRTNLGRP_IPV6_IFADDR :: (Num a) => a
-eRTNLGRP_IPV6_IFADDR = 9
-eRTNLGRP_IPV6_MROUTE :: (Num a) => a
-eRTNLGRP_IPV6_MROUTE = 10
-eRTNLGRP_IPV6_ROUTE :: (Num a) => a
-eRTNLGRP_IPV6_ROUTE = 11
-eRTNLGRP_IPV6_IFINFO :: (Num a) => a
-eRTNLGRP_IPV6_IFINFO = 12
-eRTNLGRP_DECnet_IFADDR :: (Num a) => a
-eRTNLGRP_DECnet_IFADDR = 13
-eRTNLGRP_NOP2 :: (Num a) => a
-eRTNLGRP_NOP2 = 14
-eRTNLGRP_DECnet_ROUTE :: (Num a) => a
-eRTNLGRP_DECnet_ROUTE = 15
-eRTNLGRP_DECnet_RULE :: (Num a) => a
-eRTNLGRP_DECnet_RULE = 16
-eRTNLGRP_NOP4 :: (Num a) => a
-eRTNLGRP_NOP4 = 17
-eRTNLGRP_IPV6_PREFIX :: (Num a) => a
-eRTNLGRP_IPV6_PREFIX = 18
-eRTNLGRP_IPV6_RULE :: (Num a) => a
-eRTNLGRP_IPV6_RULE = 19
-eRTNLGRP_ND_USEROPT :: (Num a) => a
-eRTNLGRP_ND_USEROPT = 20
-eRTNLGRP_PHONET_IFADDR :: (Num a) => a
-eRTNLGRP_PHONET_IFADDR = 21
-eRTNLGRP_PHONET_ROUTE :: (Num a) => a
-eRTNLGRP_PHONET_ROUTE = 22
-eRTNLGRP_DCB :: (Num a) => a
-eRTNLGRP_DCB = 23
-eRTNLGRP_IPV4_NETCONF :: (Num a) => a
-eRTNLGRP_IPV4_NETCONF = 24
-eRTNLGRP_IPV6_NETCONF :: (Num a) => a
-eRTNLGRP_IPV6_NETCONF = 25
-eRTNLGRP_MDB :: (Num a) => a
-eRTNLGRP_MDB = 26
-eRTNLGRP_MPLS_ROUTE :: (Num a) => a
-eRTNLGRP_MPLS_ROUTE = 27
-eRTNLGRP_NSID :: (Num a) => a
-eRTNLGRP_NSID = 28
-eRTNLGRP_MPLS_NETCONF :: (Num a) => a
-eRTNLGRP_MPLS_NETCONF = 29
-eRTNLGRP_IPV4_MROUTE_R :: (Num a) => a
-eRTNLGRP_IPV4_MROUTE_R = 30
-eRTNLGRP_IPV6_MROUTE_R :: (Num a) => a
-eRTNLGRP_IPV6_MROUTE_R = 31
