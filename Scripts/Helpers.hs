@@ -68,16 +68,22 @@ mkFlag2 name vals = (name : map fst values,
                         n ++ " = " ++ show v]
     values = sortBy (compare `on` snd) . toList . mapKeys ("f" ++) $ vals
 
+-- this function I need to start changing so I also get the output for the instance derivations as well
+-- note that the old one ended up using a separate function called showEnum and pass in name and vals
+-- we do the same thing as well
+-- so let's do that
 mkEnum :: String -> Map String Integer -> ([String], [String])
-mkEnum name vals = ([name], [constrs])
+mkEnum name vals = ([name], [constrs, derivingEnum name vals])
   where
     typeConstr = "data " ++ name ++ " = "
     typeConstrIndent = ("\n" ++ replicate (length typeConstr - 3) ' ')
     dataConstrs = intercalate
                   (typeConstrIndent ++ " | ")
                   (map fst values)
-    constrDeriving = typeConstrIndent ++ " deriving (Eq, Enum, Show)"
+    constrDeriving = typeConstrIndent ++ " deriving (Eq, Show)"
     constrs = typeConstr ++ dataConstrs ++ constrDeriving ++ "\n"
+    -- this sorts on the value itself...
+    -- but that doesn't help if the values are repeating as well
     values = sortBy (compare `on` snd) $ toList vals
 
 -- mkEnum :: String -> Map String Integer -> ([String], [String])
@@ -91,6 +97,24 @@ mkEnum name vals = ([name], [constrs])
 --                         n ++ " = " ++ show v]
 --     values = sortBy (compare `on` snd) . toList . mapKeys ('e' :) $ vals
 --     (fName, fun) = showEnum name vals
+
+-- the first string is the name of the function
+-- the second string is the all the impleemntations
+-- we don't want to do that
+-- we need to return enums...
+-- in that case we just return the String
+
+derivingEnum :: String -> Map String Integer -> String
+derivingEnum name vals =
+  "instance Enum " ++ name ++ " where\n" ++ toEnums ++ fromEnums
+  where
+    values = sortBy (compare `on` snd) $ toList vals
+    toEnums = concatMap
+      (\(k, v) -> "  toEnum " ++ show v ++ " = " ++ k ++ "\n") $
+      nubBy ((==) `on` snd) values
+    fromEnums = concatMap
+      (\(k, v) -> "  fromEnum " ++ k ++ " = " ++ show v ++ "\n") $
+      values
 
 showEnum :: String -> Map String Integer -> (String, String)
 showEnum name vals = (fName,
@@ -112,8 +136,6 @@ showEnum name vals = (fName,
 --   fromEnum AF_UNSPEC = 0
 --   fromEnum AF_FILE = 1
 
-derivingEnum :: String -> Map String Integer -> (String, String)
-derivingEnum = undefined
 
 selectDefines :: String -> Map String Integer -> Map String Integer
 selectDefines regex = filterWithKey (\k _ -> k =~ regex)
