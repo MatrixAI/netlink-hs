@@ -1,6 +1,6 @@
 {-# OPTIONS_HADDOCK hide, prune, ignore-exports #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-module System.Linux.Netlink.Constants (AddressFamily, MessageType, RouteFamilyType, MessageFlags, LinkType, LinkFlags, LinkAttrType, LinkAttrInfoType, AddrFlags, Scope, AddrAttrType, RouteTableId, RouteProto, RouteType, RouteFlags, RouteAttrType, NeighAttrType, NeighStateFlags, VethAttrInfoType, NetlinkFamily, RtNetlinkGroups) where
+module System.Linux.Netlink.Constants (AddressFamily, NetlinkFamily, MessageType, MessageFlags, LinkType, LinkFlags, RouteMessageType, RouteMessageFlags, RouteScope, RouteTableId, RouteProto, RouteType, RouteLinkAttrType, RouteLinkAttrInfoType, RouteAddrAttrType, RouteAddrFlags, RouteAttrType, RouteNeighAttrType, RouteNeighStateFlags, RouteNetlinkGroups, VethType) where
 
 import Data.Bits
 
@@ -149,6 +149,100 @@ instance Enum AddressFamily where
   fromEnum AF_SMC = 43
   fromEnum AF_MAX = 44
 
+data NetlinkFamily = NETLINK_ROUTE
+                   | NETLINK_ADD_MEMBERSHIP
+                   | NETLINK_UNUSED
+                   | NETLINK_DROP_MEMBERSHIP
+                   | NETLINK_USERSOCK
+                   | NETLINK_FIREWALL
+                   | NETLINK_PKTINFO
+                   | NETLINK_BROADCAST_ERROR
+                   | NETLINK_INET_DIAG
+                   | NETLINK_SOCK_DIAG
+                   | NETLINK_NFLOG
+                   | NETLINK_NO_ENOBUFS
+                   | NETLINK_RX_RING
+                   | NETLINK_XFRM
+                   | NETLINK_SELINUX
+                   | NETLINK_TX_RING
+                   | NETLINK_ISCSI
+                   | NETLINK_LISTEN_ALL_NSID
+                   | NETLINK_AUDIT
+                   | NETLINK_LIST_MEMBERSHIPS
+                   | NETLINK_CAP_ACK
+                   | NETLINK_FIB_LOOKUP
+                   | NETLINK_CONNECTOR
+                   | NETLINK_EXT_ACK
+                   | NETLINK_NETFILTER
+                   | NETLINK_IP6_FW
+                   | NETLINK_DNRTMSG
+                   | NETLINK_KOBJECT_UEVENT
+                   | NETLINK_GENERIC
+                   | NETLINK_SCSITRANSPORT
+                   | NETLINK_ECRYPTFS
+                   | NETLINK_RDMA
+                   | NETLINK_CRYPTO
+                   | NETLINK_SMC
+                   deriving (Eq, Ord, Show)
+
+instance Enum NetlinkFamily where
+  toEnum 0 = NETLINK_ROUTE
+  toEnum 1 = NETLINK_ADD_MEMBERSHIP
+  toEnum 2 = NETLINK_DROP_MEMBERSHIP
+  toEnum 3 = NETLINK_FIREWALL
+  toEnum 4 = NETLINK_BROADCAST_ERROR
+  toEnum 5 = NETLINK_NFLOG
+  toEnum 6 = NETLINK_RX_RING
+  toEnum 7 = NETLINK_SELINUX
+  toEnum 8 = NETLINK_ISCSI
+  toEnum 9 = NETLINK_AUDIT
+  toEnum 10 = NETLINK_CAP_ACK
+  toEnum 11 = NETLINK_CONNECTOR
+  toEnum 12 = NETLINK_NETFILTER
+  toEnum 13 = NETLINK_IP6_FW
+  toEnum 14 = NETLINK_DNRTMSG
+  toEnum 15 = NETLINK_KOBJECT_UEVENT
+  toEnum 16 = NETLINK_GENERIC
+  toEnum 18 = NETLINK_SCSITRANSPORT
+  toEnum 19 = NETLINK_ECRYPTFS
+  toEnum 20 = NETLINK_RDMA
+  toEnum 21 = NETLINK_CRYPTO
+  toEnum 22 = NETLINK_SMC
+  fromEnum NETLINK_ROUTE = 0
+  fromEnum NETLINK_ADD_MEMBERSHIP = 1
+  fromEnum NETLINK_UNUSED = 1
+  fromEnum NETLINK_DROP_MEMBERSHIP = 2
+  fromEnum NETLINK_USERSOCK = 2
+  fromEnum NETLINK_FIREWALL = 3
+  fromEnum NETLINK_PKTINFO = 3
+  fromEnum NETLINK_BROADCAST_ERROR = 4
+  fromEnum NETLINK_INET_DIAG = 4
+  fromEnum NETLINK_SOCK_DIAG = 4
+  fromEnum NETLINK_NFLOG = 5
+  fromEnum NETLINK_NO_ENOBUFS = 5
+  fromEnum NETLINK_RX_RING = 6
+  fromEnum NETLINK_XFRM = 6
+  fromEnum NETLINK_SELINUX = 7
+  fromEnum NETLINK_TX_RING = 7
+  fromEnum NETLINK_ISCSI = 8
+  fromEnum NETLINK_LISTEN_ALL_NSID = 8
+  fromEnum NETLINK_AUDIT = 9
+  fromEnum NETLINK_LIST_MEMBERSHIPS = 9
+  fromEnum NETLINK_CAP_ACK = 10
+  fromEnum NETLINK_FIB_LOOKUP = 10
+  fromEnum NETLINK_CONNECTOR = 11
+  fromEnum NETLINK_EXT_ACK = 11
+  fromEnum NETLINK_NETFILTER = 12
+  fromEnum NETLINK_IP6_FW = 13
+  fromEnum NETLINK_DNRTMSG = 14
+  fromEnum NETLINK_KOBJECT_UEVENT = 15
+  fromEnum NETLINK_GENERIC = 16
+  fromEnum NETLINK_SCSITRANSPORT = 18
+  fromEnum NETLINK_ECRYPTFS = 19
+  fromEnum NETLINK_RDMA = 20
+  fromEnum NETLINK_CRYPTO = 21
+  fromEnum NETLINK_SMC = 22
+
 data MessageType = NLMSG_NOOP
                  | NLMSG_ERROR
                  | NLMSG_DONE
@@ -167,168 +261,6 @@ instance Enum MessageType where
   fromEnum NLMSG_DONE = 3
   fromEnum NLMSG_OVERRUN = 4
   fromEnum NLMSG_MIN_TYPE = 16
-
-data RouteFamilyType = RTM_BASE
-                     | RTM_NEWLINK
-                     | RTM_DELLINK
-                     | RTM_GETLINK
-                     | RTM_SETLINK
-                     | RTM_NEWADDR
-                     | RTM_DELADDR
-                     | RTM_GETADDR
-                     | RTM_NEWROUTE
-                     | RTM_DELROUTE
-                     | RTM_GETROUTE
-                     | RTM_NEWNEIGH
-                     | RTM_DELNEIGH
-                     | RTM_GETNEIGH
-                     | RTM_NEWRULE
-                     | RTM_DELRULE
-                     | RTM_GETRULE
-                     | RTM_NEWQDISC
-                     | RTM_DELQDISC
-                     | RTM_GETQDISC
-                     | RTM_NEWTCLASS
-                     | RTM_DELTCLASS
-                     | RTM_GETTCLASS
-                     | RTM_NEWTFILTER
-                     | RTM_DELTFILTER
-                     | RTM_GETTFILTER
-                     | RTM_NEWACTION
-                     | RTM_DELACTION
-                     | RTM_GETACTION
-                     | RTM_NEWPREFIX
-                     | RTM_GETMULTICAST
-                     | RTM_GETANYCAST
-                     | RTM_NEWNEIGHTBL
-                     | RTM_GETNEIGHTBL
-                     | RTM_SETNEIGHTBL
-                     | RTM_NEWNDUSEROPT
-                     | RTM_NEWADDRLABEL
-                     | RTM_DELADDRLABEL
-                     | RTM_GETADDRLABEL
-                     | RTM_GETDCB
-                     | RTM_SETDCB
-                     | RTM_NEWNETCONF
-                     | RTM_DELNETCONF
-                     | RTM_GETNETCONF
-                     | RTM_NEWMDB
-                     | RTM_DELMDB
-                     | RTM_GETMDB
-                     | RTM_NEWNSID
-                     | RTM_DELNSID
-                     | RTM_GETNSID
-                     | RTM_NEWSTATS
-                     | RTM_GETSTATS
-                     | RTM_NEWCACHEREPORT
-                     deriving (Eq, Ord, Show)
-
-instance Enum RouteFamilyType where
-  toEnum 16 = RTM_BASE
-  toEnum 17 = RTM_DELLINK
-  toEnum 18 = RTM_GETLINK
-  toEnum 19 = RTM_SETLINK
-  toEnum 20 = RTM_NEWADDR
-  toEnum 21 = RTM_DELADDR
-  toEnum 22 = RTM_GETADDR
-  toEnum 24 = RTM_NEWROUTE
-  toEnum 25 = RTM_DELROUTE
-  toEnum 26 = RTM_GETROUTE
-  toEnum 28 = RTM_NEWNEIGH
-  toEnum 29 = RTM_DELNEIGH
-  toEnum 30 = RTM_GETNEIGH
-  toEnum 32 = RTM_NEWRULE
-  toEnum 33 = RTM_DELRULE
-  toEnum 34 = RTM_GETRULE
-  toEnum 36 = RTM_NEWQDISC
-  toEnum 37 = RTM_DELQDISC
-  toEnum 38 = RTM_GETQDISC
-  toEnum 40 = RTM_NEWTCLASS
-  toEnum 41 = RTM_DELTCLASS
-  toEnum 42 = RTM_GETTCLASS
-  toEnum 44 = RTM_NEWTFILTER
-  toEnum 45 = RTM_DELTFILTER
-  toEnum 46 = RTM_GETTFILTER
-  toEnum 48 = RTM_NEWACTION
-  toEnum 49 = RTM_DELACTION
-  toEnum 50 = RTM_GETACTION
-  toEnum 52 = RTM_NEWPREFIX
-  toEnum 58 = RTM_GETMULTICAST
-  toEnum 62 = RTM_GETANYCAST
-  toEnum 64 = RTM_NEWNEIGHTBL
-  toEnum 66 = RTM_GETNEIGHTBL
-  toEnum 67 = RTM_SETNEIGHTBL
-  toEnum 68 = RTM_NEWNDUSEROPT
-  toEnum 72 = RTM_NEWADDRLABEL
-  toEnum 73 = RTM_DELADDRLABEL
-  toEnum 74 = RTM_GETADDRLABEL
-  toEnum 78 = RTM_GETDCB
-  toEnum 79 = RTM_SETDCB
-  toEnum 80 = RTM_NEWNETCONF
-  toEnum 81 = RTM_DELNETCONF
-  toEnum 82 = RTM_GETNETCONF
-  toEnum 84 = RTM_NEWMDB
-  toEnum 85 = RTM_DELMDB
-  toEnum 86 = RTM_GETMDB
-  toEnum 88 = RTM_NEWNSID
-  toEnum 89 = RTM_DELNSID
-  toEnum 90 = RTM_GETNSID
-  toEnum 92 = RTM_NEWSTATS
-  toEnum 94 = RTM_GETSTATS
-  toEnum 96 = RTM_NEWCACHEREPORT
-  fromEnum RTM_BASE = 16
-  fromEnum RTM_NEWLINK = 16
-  fromEnum RTM_DELLINK = 17
-  fromEnum RTM_GETLINK = 18
-  fromEnum RTM_SETLINK = 19
-  fromEnum RTM_NEWADDR = 20
-  fromEnum RTM_DELADDR = 21
-  fromEnum RTM_GETADDR = 22
-  fromEnum RTM_NEWROUTE = 24
-  fromEnum RTM_DELROUTE = 25
-  fromEnum RTM_GETROUTE = 26
-  fromEnum RTM_NEWNEIGH = 28
-  fromEnum RTM_DELNEIGH = 29
-  fromEnum RTM_GETNEIGH = 30
-  fromEnum RTM_NEWRULE = 32
-  fromEnum RTM_DELRULE = 33
-  fromEnum RTM_GETRULE = 34
-  fromEnum RTM_NEWQDISC = 36
-  fromEnum RTM_DELQDISC = 37
-  fromEnum RTM_GETQDISC = 38
-  fromEnum RTM_NEWTCLASS = 40
-  fromEnum RTM_DELTCLASS = 41
-  fromEnum RTM_GETTCLASS = 42
-  fromEnum RTM_NEWTFILTER = 44
-  fromEnum RTM_DELTFILTER = 45
-  fromEnum RTM_GETTFILTER = 46
-  fromEnum RTM_NEWACTION = 48
-  fromEnum RTM_DELACTION = 49
-  fromEnum RTM_GETACTION = 50
-  fromEnum RTM_NEWPREFIX = 52
-  fromEnum RTM_GETMULTICAST = 58
-  fromEnum RTM_GETANYCAST = 62
-  fromEnum RTM_NEWNEIGHTBL = 64
-  fromEnum RTM_GETNEIGHTBL = 66
-  fromEnum RTM_SETNEIGHTBL = 67
-  fromEnum RTM_NEWNDUSEROPT = 68
-  fromEnum RTM_NEWADDRLABEL = 72
-  fromEnum RTM_DELADDRLABEL = 73
-  fromEnum RTM_GETADDRLABEL = 74
-  fromEnum RTM_GETDCB = 78
-  fromEnum RTM_SETDCB = 79
-  fromEnum RTM_NEWNETCONF = 80
-  fromEnum RTM_DELNETCONF = 81
-  fromEnum RTM_GETNETCONF = 82
-  fromEnum RTM_NEWMDB = 84
-  fromEnum RTM_DELMDB = 85
-  fromEnum RTM_GETMDB = 86
-  fromEnum RTM_NEWNSID = 88
-  fromEnum RTM_DELNSID = 89
-  fromEnum RTM_GETNSID = 90
-  fromEnum RTM_NEWSTATS = 92
-  fromEnum RTM_GETSTATS = 94
-  fromEnum RTM_NEWCACHEREPORT = 96
 
 data MessageFlags = NLM_F_REQUEST
                   | NLM_F_MULTI
@@ -661,232 +593,198 @@ instance Enum LinkFlags where
   fromEnum IFF_DORMANT = 131072
   fromEnum IFF_ECHO = 262144
 
-data LinkAttrType = IFLA_UNSPEC
-                  | IFLA_ADDRESS
-                  | IFLA_BROADCAST
-                  | IFLA_IFNAME
-                  | IFLA_MTU
-                  | IFLA_LINK
-                  | IFLA_QDISC
-                  | IFLA_STATS
-                  | IFLA_COST
-                  | IFLA_PRIORITY
-                  | IFLA_MASTER
-                  | IFLA_WIRELESS
-                  | IFLA_PROTINFO
-                  | IFLA_TXQLEN
-                  | IFLA_MAP
-                  | IFLA_WEIGHT
-                  | IFLA_OPERSTATE
-                  | IFLA_LINKMODE
-                  | IFLA_LINKINFO
-                  | IFLA_NET_NS_PID
-                  | IFLA_IFALIAS
-                  | IFLA_NUM_VF
-                  | IFLA_VFINFO_LIST
-                  | IFLA_STATS64
-                  | IFLA_VF_PORTS
-                  | IFLA_PORT_SELF
-                  | IFLA_AF_SPEC
-                  | IFLA_GROUP
-                  | IFLA_NET_NS_FD
-                  | IFLA_EXT_MASK
-                  | IFLA_PROMISCUITY
-                  | IFLA_NUM_TX_QUEUES
-                  | IFLA_NUM_RX_QUEUES
-                  | IFLA_CARRIER
-                  | IFLA_PHYS_PORT_ID
-                  | IFLA_CARRIER_CHANGES
-                  | IFLA_PHYS_SWITCH_ID
-                  | IFLA_LINK_NETNSID
-                  | IFLA_PHYS_PORT_NAME
-                  | IFLA_PROTO_DOWN
-                  | IFLA_GSO_MAX_SEGS
-                  | IFLA_GSO_MAX_SIZE
-                  | IFLA_PAD
-                  | IFLA_XDP
-                  | IFLA_EVENT
-                  | IFLA_NEW_NETNSID
-                  | IFLA_IF_NETNSID
-                  | IFLA_CARRIER_UP_COUNT
-                  | IFLA_CARRIER_DOWN_COUNT
-                  | IFLA_NEW_IFINDEX
-                  deriving (Eq, Ord, Show)
-
-instance Enum LinkAttrType where
-  toEnum 0 = IFLA_UNSPEC
-  toEnum 1 = IFLA_ADDRESS
-  toEnum 2 = IFLA_BROADCAST
-  toEnum 3 = IFLA_IFNAME
-  toEnum 4 = IFLA_MTU
-  toEnum 5 = IFLA_LINK
-  toEnum 6 = IFLA_QDISC
-  toEnum 7 = IFLA_STATS
-  toEnum 8 = IFLA_COST
-  toEnum 9 = IFLA_PRIORITY
-  toEnum 10 = IFLA_MASTER
-  toEnum 11 = IFLA_WIRELESS
-  toEnum 12 = IFLA_PROTINFO
-  toEnum 13 = IFLA_TXQLEN
-  toEnum 14 = IFLA_MAP
-  toEnum 15 = IFLA_WEIGHT
-  toEnum 16 = IFLA_OPERSTATE
-  toEnum 17 = IFLA_LINKMODE
-  toEnum 18 = IFLA_LINKINFO
-  toEnum 19 = IFLA_NET_NS_PID
-  toEnum 20 = IFLA_IFALIAS
-  toEnum 21 = IFLA_NUM_VF
-  toEnum 22 = IFLA_VFINFO_LIST
-  toEnum 23 = IFLA_STATS64
-  toEnum 24 = IFLA_VF_PORTS
-  toEnum 25 = IFLA_PORT_SELF
-  toEnum 26 = IFLA_AF_SPEC
-  toEnum 27 = IFLA_GROUP
-  toEnum 28 = IFLA_NET_NS_FD
-  toEnum 29 = IFLA_EXT_MASK
-  toEnum 30 = IFLA_PROMISCUITY
-  toEnum 31 = IFLA_NUM_TX_QUEUES
-  toEnum 32 = IFLA_NUM_RX_QUEUES
-  toEnum 33 = IFLA_CARRIER
-  toEnum 34 = IFLA_PHYS_PORT_ID
-  toEnum 35 = IFLA_CARRIER_CHANGES
-  toEnum 36 = IFLA_PHYS_SWITCH_ID
-  toEnum 37 = IFLA_LINK_NETNSID
-  toEnum 38 = IFLA_PHYS_PORT_NAME
-  toEnum 39 = IFLA_PROTO_DOWN
-  toEnum 40 = IFLA_GSO_MAX_SEGS
-  toEnum 41 = IFLA_GSO_MAX_SIZE
-  toEnum 42 = IFLA_PAD
-  toEnum 43 = IFLA_XDP
-  toEnum 44 = IFLA_EVENT
-  toEnum 45 = IFLA_NEW_NETNSID
-  toEnum 46 = IFLA_IF_NETNSID
-  toEnum 47 = IFLA_CARRIER_UP_COUNT
-  toEnum 48 = IFLA_CARRIER_DOWN_COUNT
-  toEnum 49 = IFLA_NEW_IFINDEX
-  fromEnum IFLA_UNSPEC = 0
-  fromEnum IFLA_ADDRESS = 1
-  fromEnum IFLA_BROADCAST = 2
-  fromEnum IFLA_IFNAME = 3
-  fromEnum IFLA_MTU = 4
-  fromEnum IFLA_LINK = 5
-  fromEnum IFLA_QDISC = 6
-  fromEnum IFLA_STATS = 7
-  fromEnum IFLA_COST = 8
-  fromEnum IFLA_PRIORITY = 9
-  fromEnum IFLA_MASTER = 10
-  fromEnum IFLA_WIRELESS = 11
-  fromEnum IFLA_PROTINFO = 12
-  fromEnum IFLA_TXQLEN = 13
-  fromEnum IFLA_MAP = 14
-  fromEnum IFLA_WEIGHT = 15
-  fromEnum IFLA_OPERSTATE = 16
-  fromEnum IFLA_LINKMODE = 17
-  fromEnum IFLA_LINKINFO = 18
-  fromEnum IFLA_NET_NS_PID = 19
-  fromEnum IFLA_IFALIAS = 20
-  fromEnum IFLA_NUM_VF = 21
-  fromEnum IFLA_VFINFO_LIST = 22
-  fromEnum IFLA_STATS64 = 23
-  fromEnum IFLA_VF_PORTS = 24
-  fromEnum IFLA_PORT_SELF = 25
-  fromEnum IFLA_AF_SPEC = 26
-  fromEnum IFLA_GROUP = 27
-  fromEnum IFLA_NET_NS_FD = 28
-  fromEnum IFLA_EXT_MASK = 29
-  fromEnum IFLA_PROMISCUITY = 30
-  fromEnum IFLA_NUM_TX_QUEUES = 31
-  fromEnum IFLA_NUM_RX_QUEUES = 32
-  fromEnum IFLA_CARRIER = 33
-  fromEnum IFLA_PHYS_PORT_ID = 34
-  fromEnum IFLA_CARRIER_CHANGES = 35
-  fromEnum IFLA_PHYS_SWITCH_ID = 36
-  fromEnum IFLA_LINK_NETNSID = 37
-  fromEnum IFLA_PHYS_PORT_NAME = 38
-  fromEnum IFLA_PROTO_DOWN = 39
-  fromEnum IFLA_GSO_MAX_SEGS = 40
-  fromEnum IFLA_GSO_MAX_SIZE = 41
-  fromEnum IFLA_PAD = 42
-  fromEnum IFLA_XDP = 43
-  fromEnum IFLA_EVENT = 44
-  fromEnum IFLA_NEW_NETNSID = 45
-  fromEnum IFLA_IF_NETNSID = 46
-  fromEnum IFLA_CARRIER_UP_COUNT = 47
-  fromEnum IFLA_CARRIER_DOWN_COUNT = 48
-  fromEnum IFLA_NEW_IFINDEX = 49
-
-data LinkAttrInfoType = IFLA_INFO_UNSPEC
-                      | IFLA_INFO_KIND
-                      | IFLA_INFO_DATA
-                      | IFLA_INFO_XSTATS
-                      | IFLA_INFO_SLAVE_KIND
-                      | IFLA_INFO_SLAVE_DATA
+data RouteMessageType = RTM_BASE
+                      | RTM_NEWLINK
+                      | RTM_DELLINK
+                      | RTM_GETLINK
+                      | RTM_SETLINK
+                      | RTM_NEWADDR
+                      | RTM_DELADDR
+                      | RTM_GETADDR
+                      | RTM_NEWROUTE
+                      | RTM_DELROUTE
+                      | RTM_GETROUTE
+                      | RTM_NEWNEIGH
+                      | RTM_DELNEIGH
+                      | RTM_GETNEIGH
+                      | RTM_NEWRULE
+                      | RTM_DELRULE
+                      | RTM_GETRULE
+                      | RTM_NEWQDISC
+                      | RTM_DELQDISC
+                      | RTM_GETQDISC
+                      | RTM_NEWTCLASS
+                      | RTM_DELTCLASS
+                      | RTM_GETTCLASS
+                      | RTM_NEWTFILTER
+                      | RTM_DELTFILTER
+                      | RTM_GETTFILTER
+                      | RTM_NEWACTION
+                      | RTM_DELACTION
+                      | RTM_GETACTION
+                      | RTM_NEWPREFIX
+                      | RTM_GETMULTICAST
+                      | RTM_GETANYCAST
+                      | RTM_NEWNEIGHTBL
+                      | RTM_GETNEIGHTBL
+                      | RTM_SETNEIGHTBL
+                      | RTM_NEWNDUSEROPT
+                      | RTM_NEWADDRLABEL
+                      | RTM_DELADDRLABEL
+                      | RTM_GETADDRLABEL
+                      | RTM_GETDCB
+                      | RTM_SETDCB
+                      | RTM_NEWNETCONF
+                      | RTM_DELNETCONF
+                      | RTM_GETNETCONF
+                      | RTM_NEWMDB
+                      | RTM_DELMDB
+                      | RTM_GETMDB
+                      | RTM_NEWNSID
+                      | RTM_DELNSID
+                      | RTM_GETNSID
+                      | RTM_NEWSTATS
+                      | RTM_GETSTATS
+                      | RTM_NEWCACHEREPORT
                       deriving (Eq, Ord, Show)
 
-instance Enum LinkAttrInfoType where
-  toEnum 0 = IFLA_INFO_UNSPEC
-  toEnum 1 = IFLA_INFO_KIND
-  toEnum 2 = IFLA_INFO_DATA
-  toEnum 3 = IFLA_INFO_XSTATS
-  toEnum 4 = IFLA_INFO_SLAVE_KIND
-  toEnum 5 = IFLA_INFO_SLAVE_DATA
-  fromEnum IFLA_INFO_UNSPEC = 0
-  fromEnum IFLA_INFO_KIND = 1
-  fromEnum IFLA_INFO_DATA = 2
-  fromEnum IFLA_INFO_XSTATS = 3
-  fromEnum IFLA_INFO_SLAVE_KIND = 4
-  fromEnum IFLA_INFO_SLAVE_DATA = 5
+instance Enum RouteMessageType where
+  toEnum 16 = RTM_BASE
+  toEnum 17 = RTM_DELLINK
+  toEnum 18 = RTM_GETLINK
+  toEnum 19 = RTM_SETLINK
+  toEnum 20 = RTM_NEWADDR
+  toEnum 21 = RTM_DELADDR
+  toEnum 22 = RTM_GETADDR
+  toEnum 24 = RTM_NEWROUTE
+  toEnum 25 = RTM_DELROUTE
+  toEnum 26 = RTM_GETROUTE
+  toEnum 28 = RTM_NEWNEIGH
+  toEnum 29 = RTM_DELNEIGH
+  toEnum 30 = RTM_GETNEIGH
+  toEnum 32 = RTM_NEWRULE
+  toEnum 33 = RTM_DELRULE
+  toEnum 34 = RTM_GETRULE
+  toEnum 36 = RTM_NEWQDISC
+  toEnum 37 = RTM_DELQDISC
+  toEnum 38 = RTM_GETQDISC
+  toEnum 40 = RTM_NEWTCLASS
+  toEnum 41 = RTM_DELTCLASS
+  toEnum 42 = RTM_GETTCLASS
+  toEnum 44 = RTM_NEWTFILTER
+  toEnum 45 = RTM_DELTFILTER
+  toEnum 46 = RTM_GETTFILTER
+  toEnum 48 = RTM_NEWACTION
+  toEnum 49 = RTM_DELACTION
+  toEnum 50 = RTM_GETACTION
+  toEnum 52 = RTM_NEWPREFIX
+  toEnum 58 = RTM_GETMULTICAST
+  toEnum 62 = RTM_GETANYCAST
+  toEnum 64 = RTM_NEWNEIGHTBL
+  toEnum 66 = RTM_GETNEIGHTBL
+  toEnum 67 = RTM_SETNEIGHTBL
+  toEnum 68 = RTM_NEWNDUSEROPT
+  toEnum 72 = RTM_NEWADDRLABEL
+  toEnum 73 = RTM_DELADDRLABEL
+  toEnum 74 = RTM_GETADDRLABEL
+  toEnum 78 = RTM_GETDCB
+  toEnum 79 = RTM_SETDCB
+  toEnum 80 = RTM_NEWNETCONF
+  toEnum 81 = RTM_DELNETCONF
+  toEnum 82 = RTM_GETNETCONF
+  toEnum 84 = RTM_NEWMDB
+  toEnum 85 = RTM_DELMDB
+  toEnum 86 = RTM_GETMDB
+  toEnum 88 = RTM_NEWNSID
+  toEnum 89 = RTM_DELNSID
+  toEnum 90 = RTM_GETNSID
+  toEnum 92 = RTM_NEWSTATS
+  toEnum 94 = RTM_GETSTATS
+  toEnum 96 = RTM_NEWCACHEREPORT
+  fromEnum RTM_BASE = 16
+  fromEnum RTM_NEWLINK = 16
+  fromEnum RTM_DELLINK = 17
+  fromEnum RTM_GETLINK = 18
+  fromEnum RTM_SETLINK = 19
+  fromEnum RTM_NEWADDR = 20
+  fromEnum RTM_DELADDR = 21
+  fromEnum RTM_GETADDR = 22
+  fromEnum RTM_NEWROUTE = 24
+  fromEnum RTM_DELROUTE = 25
+  fromEnum RTM_GETROUTE = 26
+  fromEnum RTM_NEWNEIGH = 28
+  fromEnum RTM_DELNEIGH = 29
+  fromEnum RTM_GETNEIGH = 30
+  fromEnum RTM_NEWRULE = 32
+  fromEnum RTM_DELRULE = 33
+  fromEnum RTM_GETRULE = 34
+  fromEnum RTM_NEWQDISC = 36
+  fromEnum RTM_DELQDISC = 37
+  fromEnum RTM_GETQDISC = 38
+  fromEnum RTM_NEWTCLASS = 40
+  fromEnum RTM_DELTCLASS = 41
+  fromEnum RTM_GETTCLASS = 42
+  fromEnum RTM_NEWTFILTER = 44
+  fromEnum RTM_DELTFILTER = 45
+  fromEnum RTM_GETTFILTER = 46
+  fromEnum RTM_NEWACTION = 48
+  fromEnum RTM_DELACTION = 49
+  fromEnum RTM_GETACTION = 50
+  fromEnum RTM_NEWPREFIX = 52
+  fromEnum RTM_GETMULTICAST = 58
+  fromEnum RTM_GETANYCAST = 62
+  fromEnum RTM_NEWNEIGHTBL = 64
+  fromEnum RTM_GETNEIGHTBL = 66
+  fromEnum RTM_SETNEIGHTBL = 67
+  fromEnum RTM_NEWNDUSEROPT = 68
+  fromEnum RTM_NEWADDRLABEL = 72
+  fromEnum RTM_DELADDRLABEL = 73
+  fromEnum RTM_GETADDRLABEL = 74
+  fromEnum RTM_GETDCB = 78
+  fromEnum RTM_SETDCB = 79
+  fromEnum RTM_NEWNETCONF = 80
+  fromEnum RTM_DELNETCONF = 81
+  fromEnum RTM_GETNETCONF = 82
+  fromEnum RTM_NEWMDB = 84
+  fromEnum RTM_DELMDB = 85
+  fromEnum RTM_GETMDB = 86
+  fromEnum RTM_NEWNSID = 88
+  fromEnum RTM_DELNSID = 89
+  fromEnum RTM_GETNSID = 90
+  fromEnum RTM_NEWSTATS = 92
+  fromEnum RTM_GETSTATS = 94
+  fromEnum RTM_NEWCACHEREPORT = 96
 
-data AddrFlags = IFA_F_SECONDARY
-               | IFA_F_TEMPORARY
-               | IFA_F_NODAD
-               | IFA_F_OPTIMISTIC
-               | IFA_F_DADFAILED
-               | IFA_F_HOMEADDRESS
-               | IFA_F_DEPRECATED
-               | IFA_F_TENTATIVE
-               | IFA_F_PERMANENT
-               | IFA_F_MANAGETEMPADDR
-               | IFA_F_NOPREFIXROUTE
-               | IFA_F_MCAUTOJOIN
-               | IFA_F_STABLE_PRIVACY
-               deriving (Eq, Ord, Show)
+data RouteMessageFlags = RTM_F_NOTIFY
+                       | RTM_F_CLONED
+                       | RTM_F_EQUALIZE
+                       | RTM_F_PREFIX
+                       | RTM_F_LOOKUP_TABLE
+                       | RTM_F_FIB_MATCH
+                       deriving (Eq, Ord, Show)
 
-instance Enum AddrFlags where
-  toEnum 1 = IFA_F_SECONDARY
-  toEnum 2 = IFA_F_NODAD
-  toEnum 4 = IFA_F_OPTIMISTIC
-  toEnum 8 = IFA_F_DADFAILED
-  toEnum 16 = IFA_F_HOMEADDRESS
-  toEnum 32 = IFA_F_DEPRECATED
-  toEnum 64 = IFA_F_TENTATIVE
-  toEnum 128 = IFA_F_PERMANENT
-  toEnum 256 = IFA_F_MANAGETEMPADDR
-  toEnum 512 = IFA_F_NOPREFIXROUTE
-  toEnum 1024 = IFA_F_MCAUTOJOIN
-  toEnum 2048 = IFA_F_STABLE_PRIVACY
-  fromEnum IFA_F_SECONDARY = 1
-  fromEnum IFA_F_TEMPORARY = 1
-  fromEnum IFA_F_NODAD = 2
-  fromEnum IFA_F_OPTIMISTIC = 4
-  fromEnum IFA_F_DADFAILED = 8
-  fromEnum IFA_F_HOMEADDRESS = 16
-  fromEnum IFA_F_DEPRECATED = 32
-  fromEnum IFA_F_TENTATIVE = 64
-  fromEnum IFA_F_PERMANENT = 128
-  fromEnum IFA_F_MANAGETEMPADDR = 256
-  fromEnum IFA_F_NOPREFIXROUTE = 512
-  fromEnum IFA_F_MCAUTOJOIN = 1024
-  fromEnum IFA_F_STABLE_PRIVACY = 2048
+instance Enum RouteMessageFlags where
+  toEnum 256 = RTM_F_NOTIFY
+  toEnum 512 = RTM_F_CLONED
+  toEnum 1024 = RTM_F_EQUALIZE
+  toEnum 2048 = RTM_F_PREFIX
+  toEnum 4096 = RTM_F_LOOKUP_TABLE
+  toEnum 8192 = RTM_F_FIB_MATCH
+  fromEnum RTM_F_NOTIFY = 256
+  fromEnum RTM_F_CLONED = 512
+  fromEnum RTM_F_EQUALIZE = 1024
+  fromEnum RTM_F_PREFIX = 2048
+  fromEnum RTM_F_LOOKUP_TABLE = 4096
+  fromEnum RTM_F_FIB_MATCH = 8192
 
-data Scope = RT_SCOPE_UNIVERSE
-           | RT_SCOPE_SITE
-           | RT_SCOPE_LINK
-           | RT_SCOPE_HOST
-           | RT_SCOPE_NOWHERE
-           deriving (Eq, Ord, Show)
+data RouteScope = RT_SCOPE_UNIVERSE
+                | RT_SCOPE_SITE
+                | RT_SCOPE_LINK
+                | RT_SCOPE_HOST
+                | RT_SCOPE_NOWHERE
+                deriving (Eq, Ord, Show)
 
-instance Enum Scope where
+instance Enum RouteScope where
   toEnum 0 = RT_SCOPE_UNIVERSE
   toEnum 200 = RT_SCOPE_SITE
   toEnum 253 = RT_SCOPE_LINK
@@ -897,40 +795,6 @@ instance Enum Scope where
   fromEnum RT_SCOPE_LINK = 253
   fromEnum RT_SCOPE_HOST = 254
   fromEnum RT_SCOPE_NOWHERE = 255
-
-data AddrAttrType = IFA_UNSPEC
-                  | IFA_ADDRESS
-                  | IFA_LOCAL
-                  | IFA_LABEL
-                  | IFA_BROADCAST
-                  | IFA_ANYCAST
-                  | IFA_CACHEINFO
-                  | IFA_MULTICAST
-                  | IFA_FLAGS
-                  | IFA_RT_PRIORITY
-                  deriving (Eq, Ord, Show)
-
-instance Enum AddrAttrType where
-  toEnum 0 = IFA_UNSPEC
-  toEnum 1 = IFA_ADDRESS
-  toEnum 2 = IFA_LOCAL
-  toEnum 3 = IFA_LABEL
-  toEnum 4 = IFA_BROADCAST
-  toEnum 5 = IFA_ANYCAST
-  toEnum 6 = IFA_CACHEINFO
-  toEnum 7 = IFA_MULTICAST
-  toEnum 8 = IFA_FLAGS
-  toEnum 9 = IFA_RT_PRIORITY
-  fromEnum IFA_UNSPEC = 0
-  fromEnum IFA_ADDRESS = 1
-  fromEnum IFA_LOCAL = 2
-  fromEnum IFA_LABEL = 3
-  fromEnum IFA_BROADCAST = 4
-  fromEnum IFA_ANYCAST = 5
-  fromEnum IFA_CACHEINFO = 6
-  fromEnum IFA_MULTICAST = 7
-  fromEnum IFA_FLAGS = 8
-  fromEnum IFA_RT_PRIORITY = 9
 
 data RouteTableId = RT_TABLE_UNSPEC
                   | RT_TABLE_COMPAT
@@ -1061,27 +925,257 @@ instance Enum RouteType where
   fromEnum RTN_NAT = 10
   fromEnum RTN_XRESOLVE = 11
 
-data RouteFlags = RTM_F_NOTIFY
-                | RTM_F_CLONED
-                | RTM_F_EQUALIZE
-                | RTM_F_PREFIX
-                | RTM_F_LOOKUP_TABLE
-                | RTM_F_FIB_MATCH
-                deriving (Eq, Ord, Show)
+data RouteLinkAttrType = IFLA_UNSPEC
+                       | IFLA_ADDRESS
+                       | IFLA_BROADCAST
+                       | IFLA_IFNAME
+                       | IFLA_MTU
+                       | IFLA_LINK
+                       | IFLA_QDISC
+                       | IFLA_STATS
+                       | IFLA_COST
+                       | IFLA_PRIORITY
+                       | IFLA_MASTER
+                       | IFLA_WIRELESS
+                       | IFLA_PROTINFO
+                       | IFLA_TXQLEN
+                       | IFLA_MAP
+                       | IFLA_WEIGHT
+                       | IFLA_OPERSTATE
+                       | IFLA_LINKMODE
+                       | IFLA_LINKINFO
+                       | IFLA_NET_NS_PID
+                       | IFLA_IFALIAS
+                       | IFLA_NUM_VF
+                       | IFLA_VFINFO_LIST
+                       | IFLA_STATS64
+                       | IFLA_VF_PORTS
+                       | IFLA_PORT_SELF
+                       | IFLA_AF_SPEC
+                       | IFLA_GROUP
+                       | IFLA_NET_NS_FD
+                       | IFLA_EXT_MASK
+                       | IFLA_PROMISCUITY
+                       | IFLA_NUM_TX_QUEUES
+                       | IFLA_NUM_RX_QUEUES
+                       | IFLA_CARRIER
+                       | IFLA_PHYS_PORT_ID
+                       | IFLA_CARRIER_CHANGES
+                       | IFLA_PHYS_SWITCH_ID
+                       | IFLA_LINK_NETNSID
+                       | IFLA_PHYS_PORT_NAME
+                       | IFLA_PROTO_DOWN
+                       | IFLA_GSO_MAX_SEGS
+                       | IFLA_GSO_MAX_SIZE
+                       | IFLA_PAD
+                       | IFLA_XDP
+                       | IFLA_EVENT
+                       | IFLA_NEW_NETNSID
+                       | IFLA_IF_NETNSID
+                       | IFLA_CARRIER_UP_COUNT
+                       | IFLA_CARRIER_DOWN_COUNT
+                       | IFLA_NEW_IFINDEX
+                       deriving (Eq, Ord, Show)
 
-instance Enum RouteFlags where
-  toEnum 256 = RTM_F_NOTIFY
-  toEnum 512 = RTM_F_CLONED
-  toEnum 1024 = RTM_F_EQUALIZE
-  toEnum 2048 = RTM_F_PREFIX
-  toEnum 4096 = RTM_F_LOOKUP_TABLE
-  toEnum 8192 = RTM_F_FIB_MATCH
-  fromEnum RTM_F_NOTIFY = 256
-  fromEnum RTM_F_CLONED = 512
-  fromEnum RTM_F_EQUALIZE = 1024
-  fromEnum RTM_F_PREFIX = 2048
-  fromEnum RTM_F_LOOKUP_TABLE = 4096
-  fromEnum RTM_F_FIB_MATCH = 8192
+instance Enum RouteLinkAttrType where
+  toEnum 0 = IFLA_UNSPEC
+  toEnum 1 = IFLA_ADDRESS
+  toEnum 2 = IFLA_BROADCAST
+  toEnum 3 = IFLA_IFNAME
+  toEnum 4 = IFLA_MTU
+  toEnum 5 = IFLA_LINK
+  toEnum 6 = IFLA_QDISC
+  toEnum 7 = IFLA_STATS
+  toEnum 8 = IFLA_COST
+  toEnum 9 = IFLA_PRIORITY
+  toEnum 10 = IFLA_MASTER
+  toEnum 11 = IFLA_WIRELESS
+  toEnum 12 = IFLA_PROTINFO
+  toEnum 13 = IFLA_TXQLEN
+  toEnum 14 = IFLA_MAP
+  toEnum 15 = IFLA_WEIGHT
+  toEnum 16 = IFLA_OPERSTATE
+  toEnum 17 = IFLA_LINKMODE
+  toEnum 18 = IFLA_LINKINFO
+  toEnum 19 = IFLA_NET_NS_PID
+  toEnum 20 = IFLA_IFALIAS
+  toEnum 21 = IFLA_NUM_VF
+  toEnum 22 = IFLA_VFINFO_LIST
+  toEnum 23 = IFLA_STATS64
+  toEnum 24 = IFLA_VF_PORTS
+  toEnum 25 = IFLA_PORT_SELF
+  toEnum 26 = IFLA_AF_SPEC
+  toEnum 27 = IFLA_GROUP
+  toEnum 28 = IFLA_NET_NS_FD
+  toEnum 29 = IFLA_EXT_MASK
+  toEnum 30 = IFLA_PROMISCUITY
+  toEnum 31 = IFLA_NUM_TX_QUEUES
+  toEnum 32 = IFLA_NUM_RX_QUEUES
+  toEnum 33 = IFLA_CARRIER
+  toEnum 34 = IFLA_PHYS_PORT_ID
+  toEnum 35 = IFLA_CARRIER_CHANGES
+  toEnum 36 = IFLA_PHYS_SWITCH_ID
+  toEnum 37 = IFLA_LINK_NETNSID
+  toEnum 38 = IFLA_PHYS_PORT_NAME
+  toEnum 39 = IFLA_PROTO_DOWN
+  toEnum 40 = IFLA_GSO_MAX_SEGS
+  toEnum 41 = IFLA_GSO_MAX_SIZE
+  toEnum 42 = IFLA_PAD
+  toEnum 43 = IFLA_XDP
+  toEnum 44 = IFLA_EVENT
+  toEnum 45 = IFLA_NEW_NETNSID
+  toEnum 46 = IFLA_IF_NETNSID
+  toEnum 47 = IFLA_CARRIER_UP_COUNT
+  toEnum 48 = IFLA_CARRIER_DOWN_COUNT
+  toEnum 49 = IFLA_NEW_IFINDEX
+  fromEnum IFLA_UNSPEC = 0
+  fromEnum IFLA_ADDRESS = 1
+  fromEnum IFLA_BROADCAST = 2
+  fromEnum IFLA_IFNAME = 3
+  fromEnum IFLA_MTU = 4
+  fromEnum IFLA_LINK = 5
+  fromEnum IFLA_QDISC = 6
+  fromEnum IFLA_STATS = 7
+  fromEnum IFLA_COST = 8
+  fromEnum IFLA_PRIORITY = 9
+  fromEnum IFLA_MASTER = 10
+  fromEnum IFLA_WIRELESS = 11
+  fromEnum IFLA_PROTINFO = 12
+  fromEnum IFLA_TXQLEN = 13
+  fromEnum IFLA_MAP = 14
+  fromEnum IFLA_WEIGHT = 15
+  fromEnum IFLA_OPERSTATE = 16
+  fromEnum IFLA_LINKMODE = 17
+  fromEnum IFLA_LINKINFO = 18
+  fromEnum IFLA_NET_NS_PID = 19
+  fromEnum IFLA_IFALIAS = 20
+  fromEnum IFLA_NUM_VF = 21
+  fromEnum IFLA_VFINFO_LIST = 22
+  fromEnum IFLA_STATS64 = 23
+  fromEnum IFLA_VF_PORTS = 24
+  fromEnum IFLA_PORT_SELF = 25
+  fromEnum IFLA_AF_SPEC = 26
+  fromEnum IFLA_GROUP = 27
+  fromEnum IFLA_NET_NS_FD = 28
+  fromEnum IFLA_EXT_MASK = 29
+  fromEnum IFLA_PROMISCUITY = 30
+  fromEnum IFLA_NUM_TX_QUEUES = 31
+  fromEnum IFLA_NUM_RX_QUEUES = 32
+  fromEnum IFLA_CARRIER = 33
+  fromEnum IFLA_PHYS_PORT_ID = 34
+  fromEnum IFLA_CARRIER_CHANGES = 35
+  fromEnum IFLA_PHYS_SWITCH_ID = 36
+  fromEnum IFLA_LINK_NETNSID = 37
+  fromEnum IFLA_PHYS_PORT_NAME = 38
+  fromEnum IFLA_PROTO_DOWN = 39
+  fromEnum IFLA_GSO_MAX_SEGS = 40
+  fromEnum IFLA_GSO_MAX_SIZE = 41
+  fromEnum IFLA_PAD = 42
+  fromEnum IFLA_XDP = 43
+  fromEnum IFLA_EVENT = 44
+  fromEnum IFLA_NEW_NETNSID = 45
+  fromEnum IFLA_IF_NETNSID = 46
+  fromEnum IFLA_CARRIER_UP_COUNT = 47
+  fromEnum IFLA_CARRIER_DOWN_COUNT = 48
+  fromEnum IFLA_NEW_IFINDEX = 49
+
+data RouteLinkAttrInfoType = IFLA_INFO_UNSPEC
+                           | IFLA_INFO_KIND
+                           | IFLA_INFO_DATA
+                           | IFLA_INFO_XSTATS
+                           | IFLA_INFO_SLAVE_KIND
+                           | IFLA_INFO_SLAVE_DATA
+                           deriving (Eq, Ord, Show)
+
+instance Enum RouteLinkAttrInfoType where
+  toEnum 0 = IFLA_INFO_UNSPEC
+  toEnum 1 = IFLA_INFO_KIND
+  toEnum 2 = IFLA_INFO_DATA
+  toEnum 3 = IFLA_INFO_XSTATS
+  toEnum 4 = IFLA_INFO_SLAVE_KIND
+  toEnum 5 = IFLA_INFO_SLAVE_DATA
+  fromEnum IFLA_INFO_UNSPEC = 0
+  fromEnum IFLA_INFO_KIND = 1
+  fromEnum IFLA_INFO_DATA = 2
+  fromEnum IFLA_INFO_XSTATS = 3
+  fromEnum IFLA_INFO_SLAVE_KIND = 4
+  fromEnum IFLA_INFO_SLAVE_DATA = 5
+
+data RouteAddrAttrType = IFA_UNSPEC
+                       | IFA_ADDRESS
+                       | IFA_LOCAL
+                       | IFA_LABEL
+                       | IFA_BROADCAST
+                       | IFA_ANYCAST
+                       | IFA_CACHEINFO
+                       | IFA_MULTICAST
+                       | IFA_FLAGS
+                       | IFA_RT_PRIORITY
+                       deriving (Eq, Ord, Show)
+
+instance Enum RouteAddrAttrType where
+  toEnum 0 = IFA_UNSPEC
+  toEnum 1 = IFA_ADDRESS
+  toEnum 2 = IFA_LOCAL
+  toEnum 3 = IFA_LABEL
+  toEnum 4 = IFA_BROADCAST
+  toEnum 5 = IFA_ANYCAST
+  toEnum 6 = IFA_CACHEINFO
+  toEnum 7 = IFA_MULTICAST
+  toEnum 8 = IFA_FLAGS
+  toEnum 9 = IFA_RT_PRIORITY
+  fromEnum IFA_UNSPEC = 0
+  fromEnum IFA_ADDRESS = 1
+  fromEnum IFA_LOCAL = 2
+  fromEnum IFA_LABEL = 3
+  fromEnum IFA_BROADCAST = 4
+  fromEnum IFA_ANYCAST = 5
+  fromEnum IFA_CACHEINFO = 6
+  fromEnum IFA_MULTICAST = 7
+  fromEnum IFA_FLAGS = 8
+  fromEnum IFA_RT_PRIORITY = 9
+
+data RouteAddrFlags = IFA_F_SECONDARY
+                    | IFA_F_TEMPORARY
+                    | IFA_F_NODAD
+                    | IFA_F_OPTIMISTIC
+                    | IFA_F_DADFAILED
+                    | IFA_F_HOMEADDRESS
+                    | IFA_F_DEPRECATED
+                    | IFA_F_TENTATIVE
+                    | IFA_F_PERMANENT
+                    | IFA_F_MANAGETEMPADDR
+                    | IFA_F_NOPREFIXROUTE
+                    | IFA_F_MCAUTOJOIN
+                    | IFA_F_STABLE_PRIVACY
+                    deriving (Eq, Ord, Show)
+
+instance Enum RouteAddrFlags where
+  toEnum 1 = IFA_F_SECONDARY
+  toEnum 2 = IFA_F_NODAD
+  toEnum 4 = IFA_F_OPTIMISTIC
+  toEnum 8 = IFA_F_DADFAILED
+  toEnum 16 = IFA_F_HOMEADDRESS
+  toEnum 32 = IFA_F_DEPRECATED
+  toEnum 64 = IFA_F_TENTATIVE
+  toEnum 128 = IFA_F_PERMANENT
+  toEnum 256 = IFA_F_MANAGETEMPADDR
+  toEnum 512 = IFA_F_NOPREFIXROUTE
+  toEnum 1024 = IFA_F_MCAUTOJOIN
+  toEnum 2048 = IFA_F_STABLE_PRIVACY
+  fromEnum IFA_F_SECONDARY = 1
+  fromEnum IFA_F_TEMPORARY = 1
+  fromEnum IFA_F_NODAD = 2
+  fromEnum IFA_F_OPTIMISTIC = 4
+  fromEnum IFA_F_DADFAILED = 8
+  fromEnum IFA_F_HOMEADDRESS = 16
+  fromEnum IFA_F_DEPRECATED = 32
+  fromEnum IFA_F_TENTATIVE = 64
+  fromEnum IFA_F_PERMANENT = 128
+  fromEnum IFA_F_MANAGETEMPADDR = 256
+  fromEnum IFA_F_NOPREFIXROUTE = 512
+  fromEnum IFA_F_MCAUTOJOIN = 1024
+  fromEnum IFA_F_STABLE_PRIVACY = 2048
 
 data RouteAttrType = RTA_UNSPEC
                    | RTA_DST
@@ -1177,21 +1271,21 @@ instance Enum RouteAttrType where
   fromEnum RTA_SPORT = 28
   fromEnum RTA_DPORT = 29
 
-data NeighAttrType = NDA_UNSPEC
-                   | NDA_DST
-                   | NDA_LLADDR
-                   | NDA_CACHEINFO
-                   | NDA_PROBES
-                   | NDA_VLAN
-                   | NDA_PORT
-                   | NDA_VNI
-                   | NDA_IFINDEX
-                   | NDA_MASTER
-                   | NDA_LINK_NETNSID
-                   | NDA_SRC_VNI
-                   deriving (Eq, Ord, Show)
+data RouteNeighAttrType = NDA_UNSPEC
+                        | NDA_DST
+                        | NDA_LLADDR
+                        | NDA_CACHEINFO
+                        | NDA_PROBES
+                        | NDA_VLAN
+                        | NDA_PORT
+                        | NDA_VNI
+                        | NDA_IFINDEX
+                        | NDA_MASTER
+                        | NDA_LINK_NETNSID
+                        | NDA_SRC_VNI
+                        deriving (Eq, Ord, Show)
 
-instance Enum NeighAttrType where
+instance Enum RouteNeighAttrType where
   toEnum 0 = NDA_UNSPEC
   toEnum 1 = NDA_DST
   toEnum 2 = NDA_LLADDR
@@ -1217,18 +1311,18 @@ instance Enum NeighAttrType where
   fromEnum NDA_LINK_NETNSID = 10
   fromEnum NDA_SRC_VNI = 11
 
-data NeighStateFlags = NUD_NONE
-                     | NUD_INCOMPLETE
-                     | NUD_REACHABLE
-                     | NUD_STALE
-                     | NUD_DELAY
-                     | NUD_PROBE
-                     | NUD_FAILED
-                     | NUD_NOARP
-                     | NUD_PERMANENT
-                     deriving (Eq, Ord, Show)
+data RouteNeighStateFlags = NUD_NONE
+                          | NUD_INCOMPLETE
+                          | NUD_REACHABLE
+                          | NUD_STALE
+                          | NUD_DELAY
+                          | NUD_PROBE
+                          | NUD_FAILED
+                          | NUD_NOARP
+                          | NUD_PERMANENT
+                          deriving (Eq, Ord, Show)
 
-instance Enum NeighStateFlags where
+instance Enum RouteNeighStateFlags where
   toEnum 0 = NUD_NONE
   toEnum 1 = NUD_INCOMPLETE
   toEnum 2 = NUD_REACHABLE
@@ -1248,145 +1342,41 @@ instance Enum NeighStateFlags where
   fromEnum NUD_NOARP = 64
   fromEnum NUD_PERMANENT = 128
 
-data VethAttrInfoType = VETH_INFO_UNSPEC
-                      | VETH_INFO_PEER
-                      deriving (Eq, Ord, Show)
+data RouteNetlinkGroups = RTNLGRP_NONE
+                        | RTNLGRP_LINK
+                        | RTNLGRP_NOTIFY
+                        | RTNLGRP_NEIGH
+                        | RTNLGRP_TC
+                        | RTNLGRP_IPV4_IFADDR
+                        | RTNLGRP_IPV4_MROUTE
+                        | RTNLGRP_IPV4_ROUTE
+                        | RTNLGRP_IPV4_RULE
+                        | RTNLGRP_IPV6_IFADDR
+                        | RTNLGRP_IPV6_MROUTE
+                        | RTNLGRP_IPV6_ROUTE
+                        | RTNLGRP_IPV6_IFINFO
+                        | RTNLGRP_DECnet_IFADDR
+                        | RTNLGRP_NOP2
+                        | RTNLGRP_DECnet_ROUTE
+                        | RTNLGRP_DECnet_RULE
+                        | RTNLGRP_NOP4
+                        | RTNLGRP_IPV6_PREFIX
+                        | RTNLGRP_IPV6_RULE
+                        | RTNLGRP_ND_USEROPT
+                        | RTNLGRP_PHONET_IFADDR
+                        | RTNLGRP_PHONET_ROUTE
+                        | RTNLGRP_DCB
+                        | RTNLGRP_IPV4_NETCONF
+                        | RTNLGRP_IPV6_NETCONF
+                        | RTNLGRP_MDB
+                        | RTNLGRP_MPLS_ROUTE
+                        | RTNLGRP_NSID
+                        | RTNLGRP_MPLS_NETCONF
+                        | RTNLGRP_IPV4_MROUTE_R
+                        | RTNLGRP_IPV6_MROUTE_R
+                        deriving (Eq, Ord, Show)
 
-instance Enum VethAttrInfoType where
-  toEnum 0 = VETH_INFO_UNSPEC
-  toEnum 1 = VETH_INFO_PEER
-  fromEnum VETH_INFO_UNSPEC = 0
-  fromEnum VETH_INFO_PEER = 1
-
-data NetlinkFamily = NETLINK_ROUTE
-                   | NETLINK_ADD_MEMBERSHIP
-                   | NETLINK_UNUSED
-                   | NETLINK_DROP_MEMBERSHIP
-                   | NETLINK_USERSOCK
-                   | NETLINK_FIREWALL
-                   | NETLINK_PKTINFO
-                   | NETLINK_BROADCAST_ERROR
-                   | NETLINK_INET_DIAG
-                   | NETLINK_SOCK_DIAG
-                   | NETLINK_NFLOG
-                   | NETLINK_NO_ENOBUFS
-                   | NETLINK_RX_RING
-                   | NETLINK_XFRM
-                   | NETLINK_SELINUX
-                   | NETLINK_TX_RING
-                   | NETLINK_ISCSI
-                   | NETLINK_LISTEN_ALL_NSID
-                   | NETLINK_AUDIT
-                   | NETLINK_LIST_MEMBERSHIPS
-                   | NETLINK_CAP_ACK
-                   | NETLINK_FIB_LOOKUP
-                   | NETLINK_CONNECTOR
-                   | NETLINK_EXT_ACK
-                   | NETLINK_NETFILTER
-                   | NETLINK_IP6_FW
-                   | NETLINK_DNRTMSG
-                   | NETLINK_KOBJECT_UEVENT
-                   | NETLINK_GENERIC
-                   | NETLINK_SCSITRANSPORT
-                   | NETLINK_ECRYPTFS
-                   | NETLINK_RDMA
-                   | NETLINK_CRYPTO
-                   | NETLINK_SMC
-                   deriving (Eq, Ord, Show)
-
-instance Enum NetlinkFamily where
-  toEnum 0 = NETLINK_ROUTE
-  toEnum 1 = NETLINK_ADD_MEMBERSHIP
-  toEnum 2 = NETLINK_DROP_MEMBERSHIP
-  toEnum 3 = NETLINK_FIREWALL
-  toEnum 4 = NETLINK_BROADCAST_ERROR
-  toEnum 5 = NETLINK_NFLOG
-  toEnum 6 = NETLINK_RX_RING
-  toEnum 7 = NETLINK_SELINUX
-  toEnum 8 = NETLINK_ISCSI
-  toEnum 9 = NETLINK_AUDIT
-  toEnum 10 = NETLINK_CAP_ACK
-  toEnum 11 = NETLINK_CONNECTOR
-  toEnum 12 = NETLINK_NETFILTER
-  toEnum 13 = NETLINK_IP6_FW
-  toEnum 14 = NETLINK_DNRTMSG
-  toEnum 15 = NETLINK_KOBJECT_UEVENT
-  toEnum 16 = NETLINK_GENERIC
-  toEnum 18 = NETLINK_SCSITRANSPORT
-  toEnum 19 = NETLINK_ECRYPTFS
-  toEnum 20 = NETLINK_RDMA
-  toEnum 21 = NETLINK_CRYPTO
-  toEnum 22 = NETLINK_SMC
-  fromEnum NETLINK_ROUTE = 0
-  fromEnum NETLINK_ADD_MEMBERSHIP = 1
-  fromEnum NETLINK_UNUSED = 1
-  fromEnum NETLINK_DROP_MEMBERSHIP = 2
-  fromEnum NETLINK_USERSOCK = 2
-  fromEnum NETLINK_FIREWALL = 3
-  fromEnum NETLINK_PKTINFO = 3
-  fromEnum NETLINK_BROADCAST_ERROR = 4
-  fromEnum NETLINK_INET_DIAG = 4
-  fromEnum NETLINK_SOCK_DIAG = 4
-  fromEnum NETLINK_NFLOG = 5
-  fromEnum NETLINK_NO_ENOBUFS = 5
-  fromEnum NETLINK_RX_RING = 6
-  fromEnum NETLINK_XFRM = 6
-  fromEnum NETLINK_SELINUX = 7
-  fromEnum NETLINK_TX_RING = 7
-  fromEnum NETLINK_ISCSI = 8
-  fromEnum NETLINK_LISTEN_ALL_NSID = 8
-  fromEnum NETLINK_AUDIT = 9
-  fromEnum NETLINK_LIST_MEMBERSHIPS = 9
-  fromEnum NETLINK_CAP_ACK = 10
-  fromEnum NETLINK_FIB_LOOKUP = 10
-  fromEnum NETLINK_CONNECTOR = 11
-  fromEnum NETLINK_EXT_ACK = 11
-  fromEnum NETLINK_NETFILTER = 12
-  fromEnum NETLINK_IP6_FW = 13
-  fromEnum NETLINK_DNRTMSG = 14
-  fromEnum NETLINK_KOBJECT_UEVENT = 15
-  fromEnum NETLINK_GENERIC = 16
-  fromEnum NETLINK_SCSITRANSPORT = 18
-  fromEnum NETLINK_ECRYPTFS = 19
-  fromEnum NETLINK_RDMA = 20
-  fromEnum NETLINK_CRYPTO = 21
-  fromEnum NETLINK_SMC = 22
-
-data RtNetlinkGroups = RTNLGRP_NONE
-                     | RTNLGRP_LINK
-                     | RTNLGRP_NOTIFY
-                     | RTNLGRP_NEIGH
-                     | RTNLGRP_TC
-                     | RTNLGRP_IPV4_IFADDR
-                     | RTNLGRP_IPV4_MROUTE
-                     | RTNLGRP_IPV4_ROUTE
-                     | RTNLGRP_IPV4_RULE
-                     | RTNLGRP_IPV6_IFADDR
-                     | RTNLGRP_IPV6_MROUTE
-                     | RTNLGRP_IPV6_ROUTE
-                     | RTNLGRP_IPV6_IFINFO
-                     | RTNLGRP_DECnet_IFADDR
-                     | RTNLGRP_NOP2
-                     | RTNLGRP_DECnet_ROUTE
-                     | RTNLGRP_DECnet_RULE
-                     | RTNLGRP_NOP4
-                     | RTNLGRP_IPV6_PREFIX
-                     | RTNLGRP_IPV6_RULE
-                     | RTNLGRP_ND_USEROPT
-                     | RTNLGRP_PHONET_IFADDR
-                     | RTNLGRP_PHONET_ROUTE
-                     | RTNLGRP_DCB
-                     | RTNLGRP_IPV4_NETCONF
-                     | RTNLGRP_IPV6_NETCONF
-                     | RTNLGRP_MDB
-                     | RTNLGRP_MPLS_ROUTE
-                     | RTNLGRP_NSID
-                     | RTNLGRP_MPLS_NETCONF
-                     | RTNLGRP_IPV4_MROUTE_R
-                     | RTNLGRP_IPV6_MROUTE_R
-                     deriving (Eq, Ord, Show)
-
-instance Enum RtNetlinkGroups where
+instance Enum RouteNetlinkGroups where
   toEnum 0 = RTNLGRP_NONE
   toEnum 1 = RTNLGRP_LINK
   toEnum 2 = RTNLGRP_NOTIFY
@@ -1451,4 +1441,14 @@ instance Enum RtNetlinkGroups where
   fromEnum RTNLGRP_MPLS_NETCONF = 29
   fromEnum RTNLGRP_IPV4_MROUTE_R = 30
   fromEnum RTNLGRP_IPV6_MROUTE_R = 31
+
+data VethType = VETH_INFO_UNSPEC
+              | VETH_INFO_PEER
+              deriving (Eq, Ord, Show)
+
+instance Enum VethType where
+  toEnum 0 = VETH_INFO_UNSPEC
+  toEnum 1 = VETH_INFO_PEER
+  fromEnum VETH_INFO_UNSPEC = 0
+  fromEnum VETH_INFO_PEER = 1
 

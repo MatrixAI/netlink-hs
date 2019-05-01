@@ -37,28 +37,27 @@ outputs d e = let define r = selectDefines r d
                   enum r = selectEnum r e
               in map fst &&& map snd $
     [mkADT "AddressFamily" $ define "^AF_",
+     mkADT "NetlinkFamily" $ define   "^NETLINK_",
      mkADT "MessageType" $ define "^NLMSG_(?!ALIGNTO)",
-     mkADT "RouteFamilyType" $ enum "^RTM_",
-
      mkADT "MessageFlags"  $ define "^NLM_F_",
      mkADT "LinkType"      $ define "^ARPHRD_",
-     mkADT "LinkFlags"     $
-       union (define "^IFF_") (enum "^IFF_"),
-     mkADT "LinkAttrType"  $ enum   "^IFLA_",
-     mkADT "LinkAttrInfoType" $ enum "^IFLA_INFO_",
-     mkADT "AddrFlags"     $ define "^IFA_F_",
-     mkADT "Scope"         $ enum   "^RT_SCOPE_",
-     mkADT "AddrAttrType"  $ enum   "^IFA_",
+     mkADT "LinkFlags" $ union (define "^IFF_") (enum "^IFF_"),
+     -- route netlink
+     mkADT "RouteMessageType" $ enum "^RTM_",
+     mkADT "RouteMessageFlags"    $ define "^RTM_F_",
+     mkADT "RouteScope"         $ enum   "^RT_SCOPE_",
      mkADT "RouteTableId"  $ enum   "^RT_TABLE_",
      mkADT "RouteProto"    $ define "^RTPROT_",
      mkADT "RouteType"     $ enum   "^RTN_",
-     mkADT "RouteFlags"    $ define "^RTM_F_",
+     mkADT "RouteLinkAttrType"  $ enum   "^IFLA_",
+     mkADT "RouteLinkAttrInfoType" $ enum "^IFLA_INFO_",
+     mkADT "RouteAddrAttrType"  $ enum   "^IFA_",
+     mkADT "RouteAddrFlags"     $ define "^IFA_F_",
      mkADT "RouteAttrType" $ enum   "^RTA_",
-     mkADT "NeighAttrType" $ enum   "^NDA_",
-     mkADT "NeighStateFlags" $ define   "^NUD_",
-     mkADT "VethAttrInfoType" $ enum "^VETH_INFO_",
-     mkADT "NetlinkFamily" $ define   "^NETLINK_",
-     mkADT "RtNetlinkGroups" $ enum   "^RTNLGRP_"]
+     mkADT "RouteNeighAttrType" $ enum   "^NDA_",
+     mkADT "RouteNeighStateFlags" $ define   "^NUD_",
+     mkADT "RouteNetlinkGroups" $ enum   "^RTNLGRP_",
+     mkADT "VethType" $ enum "^VETH_INFO_"]
 
 includeFiles :: [String]
 includeFiles = [ "sys/types.h"
