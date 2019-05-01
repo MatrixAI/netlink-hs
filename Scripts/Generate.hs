@@ -36,33 +36,29 @@ outputs :: Map String Integer -> [Map String Integer] -> ([[String]], [[String]]
 outputs d e = let define r = selectDefines r d
                   enum r = selectEnum r e
               in map fst &&& map snd $
-    [mkEnum "AddressFamily" $ define "^AF_",
-     mkEnum "MessageType" $ define "^NLMSG_(?!ALIGNTO)",
-     -- these are families
-     -- RouteFamily really... so it's the family header
-     -- but it's the message type under the Route family
-     --
-     mkEnum "RouteMessageType" $ enum "^RTM_",
+    [mkADT "AddressFamily" $ define "^AF_",
+     mkADT "MessageType" $ define "^NLMSG_(?!ALIGNTO)",
+     mkADT "RouteFamilyType" $ enum "^RTM_",
 
-     mkFlag "MessageFlags"  $ define "^NLM_F_",
-     mkEnum "LinkType"      $ define "^ARPHRD_",
-     mkFlag "LinkFlags"     $
+     mkADT "MessageFlags"  $ define "^NLM_F_",
+     mkADT "LinkType"      $ define "^ARPHRD_",
+     mkADT "LinkFlags"     $
        union (define "^IFF_") (enum "^IFF_"),
-     mkEnum "LinkAttrType"  $ enum   "^IFLA_",
-     mkEnum "LinkAttrInfoType" $ enum "^IFLA_INFO_",
-     mkFlag "AddrFlags"     $ define "^IFA_F_",
-     mkEnum "Scope"         $ enum   "^RT_SCOPE_",
-     mkEnum "AddrAttrType"  $ enum   "^IFA_",
-     mkEnum "RouteTableId"  $ enum   "^RT_TABLE_",
-     mkEnum "RouteProto"    $ define "^RTPROT_",
-     mkEnum "RouteType"     $ enum   "^RTN_",
-     mkFlag "RouteFlags"    $ define "^RTM_F_",
-     mkEnum "RouteAttrType" $ enum   "^RTA_",
-     mkEnum "NeighAttrType" $ enum   "^NDA_",
-     mkFlag "NeighStateFlags" $ define   "^NUD_",
-     mkEnum "VethAttrInfoType" $ enum "^VETH_INFO_",
-     mkEnum "NetlinkFamily" $ define   "^NETLINK_",
-     mkEnum "RtNetlinkGroups" $ enum   "^RTNLGRP_"]
+     mkADT "LinkAttrType"  $ enum   "^IFLA_",
+     mkADT "LinkAttrInfoType" $ enum "^IFLA_INFO_",
+     mkADT "AddrFlags"     $ define "^IFA_F_",
+     mkADT "Scope"         $ enum   "^RT_SCOPE_",
+     mkADT "AddrAttrType"  $ enum   "^IFA_",
+     mkADT "RouteTableId"  $ enum   "^RT_TABLE_",
+     mkADT "RouteProto"    $ define "^RTPROT_",
+     mkADT "RouteType"     $ enum   "^RTN_",
+     mkADT "RouteFlags"    $ define "^RTM_F_",
+     mkADT "RouteAttrType" $ enum   "^RTA_",
+     mkADT "NeighAttrType" $ enum   "^NDA_",
+     mkADT "NeighStateFlags" $ define   "^NUD_",
+     mkADT "VethAttrInfoType" $ enum "^VETH_INFO_",
+     mkADT "NetlinkFamily" $ define   "^NETLINK_",
+     mkADT "RtNetlinkGroups" $ enum   "^RTNLGRP_"]
 
 includeFiles :: [String]
 includeFiles = [ "sys/types.h"

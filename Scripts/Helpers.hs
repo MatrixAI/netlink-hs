@@ -4,7 +4,7 @@ module Helpers
   , getEnums
   , selectDefines
   , selectEnum
-  , mkEnum
+  , mkADT
   , mkFlag
   , selectEnums
   )
@@ -38,6 +38,9 @@ import Prelude hiding (lookup)
 mkIncludeBlock :: [String] -> String
 mkIncludeBlock = unlines . map (\e -> "#include <" ++ e ++ ">")
 
+sortedConstants :: Map String Integer -> [(String, Integer)]
+sortedConstants keyValues = sortBy (compare `on` snd) $ toList keyValues
+
 mkFlag :: String -> Map String Integer -> ([String], [String])
 mkFlag name vals = (name : map fst values,
                     ty : "" : join (map makeConst values))
@@ -57,34 +60,43 @@ mkFlag name vals = (name : map fst values,
 -- we have to make sure we actually deriving them properly
 -- so we have to ensure that first...
 -- we need to create a class thinsg as well
-mkFlag2 :: String -> Map String Integer -> ([String], [String])
-mkFlag2 name vals = (name : map fst values,
-                    ty : "" : join (map makeConst values))
-  where
-    ty = "newtype " ++ name ++ " = " ++
-          name ++
-          " Int deriving (Bits, Eq, Enum, Integral, Num, Ord, Real, Show)"
-    makeConst (n, v) = [n ++ " :: (Num a, Bits a) => a",
-                        n ++ " = " ++ show v]
-    values = sortBy (compare `on` snd) . toList . mapKeys ("f" ++) $ vals
 
--- this function I need to start changing so I also get the output for the instance derivations as well
--- note that the old one ended up using a separate function called showEnum and pass in name and vals
--- we do the same thing as well
--- so let's do that
-mkEnum :: String -> Map String Integer -> ([String], [String])
-mkEnum name vals = ([name], [constrs, derivingEnum name vals])
+
+mkADT :: String -> Map String Integer -> ([String], [String])
+mkADT name constants = ([name], [constrs, enumClass])
   where
+    constantsList = sortedConstants constants
     typeConstr = "data " ++ name ++ " = "
     typeConstrIndent = ("\n" ++ replicate (length typeConstr - 3) ' ')
     dataConstrs = intercalate
                   (typeConstrIndent ++ " | ")
-                  (map fst values)
-    constrDeriving = typeConstrIndent ++ " deriving (Eq, Show)"
-    constrs = typeConstr ++ dataConstrs ++ constrDeriving ++ "\n"
-    -- this sorts on the value itself...
-    -- but that doesn't help if the values are repeating as well
-    values = sortBy (compare `on` snd) $ toList vals
+                  (map fst constantsList)
+    enumDeriving = typeConstrIndent ++ " deriving (Eq, Ord, Show)"
+    constrs = typeConstr ++ dataConstrs ++ enumDeriving ++ "\n"
+    enumClass = mkEnumClass name constantsList
+
+mkEnumClass :: String -> [(String, Integer)] -> String
+mkEnumClass name constantsList =
+  "instance Enum " ++ name ++ " where\n" ++ toEnums ++ fromEnums
+  where
+    toEnums = concatMap
+      (\(k, v) -> "  toEnum " ++ show v ++ " = " ++ k ++ "\n") $
+      nubBy ((==) `on` snd) constantsList
+    fromEnums = concatMap
+      (\(k, v) -> "  fromEnum " ++ k ++ " = " ++ show v ++ "\n") $
+      constantsList
+
+-- derivingEnum :: String -> Map String Integer -> String
+-- derivingEnum name vals =
+--   "instance Enum " ++ name ++ " where\n" ++ toEnums ++ fromEnums
+--   where
+--     values = sortBy (compare `on` snd) $ toList vals
+--     toEnums = concatMap
+--       (\(k, v) -> "  toEnum " ++ show v ++ " = " ++ k ++ "\n") $
+--       nubBy ((==) `on` snd) values
+--     fromEnums = concatMap
+--       (\(k, v) -> "  fromEnum " ++ k ++ " = " ++ show v ++ "\n") $
+--       values
 
 -- mkEnum :: String -> Map String Integer -> ([String], [String])
 -- mkEnum name vals = (name : fName : map fst values,
@@ -104,27 +116,17 @@ mkEnum name vals = ([name], [constrs, derivingEnum name vals])
 -- we need to return enums...
 -- in that case we just return the String
 
-derivingEnum :: String -> Map String Integer -> String
-derivingEnum name vals =
-  "instance Enum " ++ name ++ " where\n" ++ toEnums ++ fromEnums
-  where
-    values = sortBy (compare `on` snd) $ toList vals
-    toEnums = concatMap
-      (\(k, v) -> "  toEnum " ++ show v ++ " = " ++ k ++ "\n") $
-      nubBy ((==) `on` snd) values
-    fromEnums = concatMap
-      (\(k, v) -> "  fromEnum " ++ k ++ " = " ++ show v ++ "\n") $
-      values
 
-showEnum :: String -> Map String Integer -> (String, String)
-showEnum name vals = (fName,
-  fName ++ " :: (Num a) => (Show a) => (Eq a) => a -> String\n" ++
-  concatMap makeLine values ++
-  fName ++ " i = \"" ++ name ++ " #\" ++ (show i)\n")
-  where
-    makeLine (n, v) = fName ++ ' ':(show v) ++ " = \"" ++ n ++ "\"\n"
-    values = nubBy ((==) `on` snd) . sortBy (compare `on` snd) . toList $vals
-    fName = "show" ++ name
+
+-- showEnum :: String -> Map String Integer -> (String, String)
+-- showEnum name vals = (fName,
+--   fName ++ " :: (Num a) => (Show a) => (Eq a) => a -> String\n" ++
+--   concatMap makeLine values ++
+--   fName ++ " i = \"" ++ name ++ " #\" ++ (show i)\n")
+--   where
+--     makeLine (n, v) = fName ++ ' ':(show v) ++ " = \"" ++ n ++ "\"\n"
+--     values = nubBy ((==) `on` snd) . sortBy (compare `on` snd) . toList $vals
+--     fName = "show" ++ name
 
 
 -- this is what we need (so we need to change showEnum) to that
