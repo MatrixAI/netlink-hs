@@ -2,8 +2,6 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module System.Linux.Netlink.Constants (AddressFamily, NetlinkFamily, MessageType, MessageFlags, LinkType, LinkFlags, RouteMessageType, RouteMessageFlags, RouteScope, RouteTableId, RouteProto, RouteType, RouteLinkAttrType, RouteLinkAttrInfoType, RouteAddrAttrType, RouteAddrFlags, RouteAttrType, RouteNeighAttrType, RouteNeighStateFlags, RouteNetlinkGroups, VethType) where
 
-import Data.Bits
-
 data AddressFamily = AF_UNSPEC
                    | AF_FILE
                    | AF_LOCAL
