@@ -1,6 +1,6 @@
 {-# OPTIONS_HADDOCK hide, prune, ignore-exports #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-module System.Linux.Netlink.Constants (AddressFamily, NetlinkFamily, MessageType, MessageFlags, LinkType, LinkFlags, RouteMessageType, RouteMessageFlags, RouteScope, RouteTableId, RouteProto, RouteType, RouteLinkAttrType, RouteLinkAttrInfoType, RouteAddrAttrType, RouteAddrFlags, RouteAttrType, RouteNeighAttrType, RouteNeighStateFlags, RouteNetlinkGroups, VethType) where
+module System.Linux.Netlink.Constants (AddressFamily, NetlinkFamily, MessageType, MessageFlags, LinkType, LinkFlags, RouteMessageType, RouteMessageFlags, RouteScope, RouteTableId, RouteProto, RouteType, RouteLinkAttrType, RouteLinkAttrInfoType, RouteAddrAttrType, RouteAddrFlags, RouteAttrType, RouteNeighAttrType, RouteNeighStateFlags, RouteNetlinkGroups, VethType, ControlCommand, ControlAttr, ControlAttrOp, ControlAttrMCast) where
 
 data AddressFamily = AF_UNSPEC
                    | AF_FILE
@@ -1449,4 +1449,92 @@ instance Enum VethType where
   toEnum 1 = VETH_INFO_PEER
   fromEnum VETH_INFO_UNSPEC = 0
   fromEnum VETH_INFO_PEER = 1
+
+data ControlCommand = CTRL_CMD_UNSPEC
+                    | CTRL_CMD_NEWFAMILY
+                    | CTRL_CMD_DELFAMILY
+                    | CTRL_CMD_GETFAMILY
+                    | CTRL_CMD_NEWOPS
+                    | CTRL_CMD_DELOPS
+                    | CTRL_CMD_GETOPS
+                    | CTRL_CMD_NEWMCAST_GRP
+                    | CTRL_CMD_DELMCAST_GRP
+                    | CTRL_CMD_GETMCAST_GRP
+                    deriving (Eq, Ord, Show)
+
+instance Enum ControlCommand where
+  toEnum 0 = CTRL_CMD_UNSPEC
+  toEnum 1 = CTRL_CMD_NEWFAMILY
+  toEnum 2 = CTRL_CMD_DELFAMILY
+  toEnum 3 = CTRL_CMD_GETFAMILY
+  toEnum 4 = CTRL_CMD_NEWOPS
+  toEnum 5 = CTRL_CMD_DELOPS
+  toEnum 6 = CTRL_CMD_GETOPS
+  toEnum 7 = CTRL_CMD_NEWMCAST_GRP
+  toEnum 8 = CTRL_CMD_DELMCAST_GRP
+  toEnum 9 = CTRL_CMD_GETMCAST_GRP
+  fromEnum CTRL_CMD_UNSPEC = 0
+  fromEnum CTRL_CMD_NEWFAMILY = 1
+  fromEnum CTRL_CMD_DELFAMILY = 2
+  fromEnum CTRL_CMD_GETFAMILY = 3
+  fromEnum CTRL_CMD_NEWOPS = 4
+  fromEnum CTRL_CMD_DELOPS = 5
+  fromEnum CTRL_CMD_GETOPS = 6
+  fromEnum CTRL_CMD_NEWMCAST_GRP = 7
+  fromEnum CTRL_CMD_DELMCAST_GRP = 8
+  fromEnum CTRL_CMD_GETMCAST_GRP = 9
+
+data ControlAttr = CTRL_ATTR_UNSPEC
+                 | CTRL_ATTR_FAMILY_ID
+                 | CTRL_ATTR_FAMILY_NAME
+                 | CTRL_ATTR_VERSION
+                 | CTRL_ATTR_HDRSIZE
+                 | CTRL_ATTR_MAXATTR
+                 | CTRL_ATTR_OPS
+                 | CTRL_ATTR_MCAST_GROUPS
+                 deriving (Eq, Ord, Show)
+
+instance Enum ControlAttr where
+  toEnum 0 = CTRL_ATTR_UNSPEC
+  toEnum 1 = CTRL_ATTR_FAMILY_ID
+  toEnum 2 = CTRL_ATTR_FAMILY_NAME
+  toEnum 3 = CTRL_ATTR_VERSION
+  toEnum 4 = CTRL_ATTR_HDRSIZE
+  toEnum 5 = CTRL_ATTR_MAXATTR
+  toEnum 6 = CTRL_ATTR_OPS
+  toEnum 7 = CTRL_ATTR_MCAST_GROUPS
+  fromEnum CTRL_ATTR_UNSPEC = 0
+  fromEnum CTRL_ATTR_FAMILY_ID = 1
+  fromEnum CTRL_ATTR_FAMILY_NAME = 2
+  fromEnum CTRL_ATTR_VERSION = 3
+  fromEnum CTRL_ATTR_HDRSIZE = 4
+  fromEnum CTRL_ATTR_MAXATTR = 5
+  fromEnum CTRL_ATTR_OPS = 6
+  fromEnum CTRL_ATTR_MCAST_GROUPS = 7
+
+data ControlAttrOp = CTRL_ATTR_OP_UNSPEC
+                   | CTRL_ATTR_OP_ID
+                   | CTRL_ATTR_OP_FLAGS
+                   deriving (Eq, Ord, Show)
+
+instance Enum ControlAttrOp where
+  toEnum 0 = CTRL_ATTR_OP_UNSPEC
+  toEnum 1 = CTRL_ATTR_OP_ID
+  toEnum 2 = CTRL_ATTR_OP_FLAGS
+  fromEnum CTRL_ATTR_OP_UNSPEC = 0
+  fromEnum CTRL_ATTR_OP_ID = 1
+  fromEnum CTRL_ATTR_OP_FLAGS = 2
+
+data ControlAttrMCast = CTRL_ATTR_MCAST_GRP_UNSPEC
+                      | CTRL_ATTR_MCAST_GRP_NAME
+                      | CTRL_ATTR_MCAST_GRP_ID
+                      deriving (Eq, Ord, Show)
+
+instance Enum ControlAttrMCast where
+  toEnum 0 = CTRL_ATTR_MCAST_GRP_UNSPEC
+  toEnum 1 = CTRL_ATTR_MCAST_GRP_NAME
+  toEnum 2 = CTRL_ATTR_MCAST_GRP_ID
+  fromEnum CTRL_ATTR_MCAST_GRP_UNSPEC = 0
+  fromEnum CTRL_ATTR_MCAST_GRP_NAME = 1
+  fromEnum CTRL_ATTR_MCAST_GRP_ID = 2
 

@@ -1,11 +1,11 @@
 module Main where
 
+import qualified Data.Map                      as M
+import qualified Helpers                       as H
 import           Control.Arrow                  ( (&&&) )
 import           Control.Monad                  ( join )
 import           Data.List                      ( intersperse )
 import           Data.Map                       ( Map )
-import qualified Data.Map                      as M
-import qualified Helpers                       as H
 import           System.Environment             ( getArgs )
 
 includeFiles :: [String]
@@ -20,6 +20,7 @@ includeFiles =
   , "linux/rtnetlink.h"
   , "linux/neighbour.h"
   , "linux/veth.h"
+  , "linux/genetlink.h"
   ]
 
 outputs
@@ -51,6 +52,11 @@ outputs d e =
           , H.mkADT "RouteNeighStateFlags" $ define "^NUD_"
           , H.mkADT "RouteNetlinkGroups" $ enum "^RTNLGRP_"
           , H.mkADT "VethType" $ enum "^VETH_INFO_"
+            -- genetlink
+          , H.mkADT "ControlCommand" $ enum "^CTRL_CMD_[^_]+"
+          , H.mkADT "ControlAttr" $ enum "^CTRL_ATTR_"
+          , H.mkADT "ControlAttrOp" $ enum "^CTRL_ATTR_OP_"
+          , H.mkADT "ControlAttrMCast" $ enum "^CTRL_ATTR_MCAST_"
           ]
 
 main :: IO ()
