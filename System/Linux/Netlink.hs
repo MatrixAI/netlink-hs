@@ -6,17 +6,14 @@
 
 module System.Linux.Netlink where
 
-  
 import Control.Applicative ((<$>))
 import Data.List (intersperse)
 import Control.Monad (when, replicateM_, unless)
 import Control.Monad.Loops (whileM)
 import Data.Bits (Bits, (.&.))
 import Hexdump (prettyHex)
-
 import Foreign.C.Types (CInt)
 import Data.Word (Word16, Word32)
-
 import Data.Serialize.Get (Get)
 import Data.Serialize.Put (Put)
 import qualified Data.Serialize.Get as SG
@@ -27,6 +24,8 @@ import qualified Data.Set as Set
 import qualified Data.ByteString as B
 import qualified Data.List.NonEmpty as NE
 import qualified System.Linux.Netlink.Constants as NLC
+import Data.Word (Word8, Word16, Word32)
+import Data.Int (Int32)
 
 data MessageHeader = MessageHeader
   { messageType :: NLC.MessageType
@@ -52,11 +51,15 @@ data Message a where
     messageHeader :: MessageHeader
   } -> Message a
 
+
 deriving instance Show (Message a)
 deriving instance Eq (Message a)
 
+data MessageType = Standard NLC.MessageType | Route NLC.RouteMessageType
+
 class (Show a, Eq a) => FamilyHeader a where
-  getFamilyHeader :: NLC.MessageType -> Get a
+  -- getFamilyHeader :: NLC.MessageType -> Get a
+  getFamilyHeader :: MessageType -> Get a
   putFamilyHeader :: a -> Put
 
 type AttributeType = Word16
@@ -128,7 +131,7 @@ msgHeaderSize = 16
 getMsgHeader:: Get (MessageHeader, Int)
 getMsgHeader = SG.isolate msgHeaderSize $ do
   msgSize   <- fromIntegral <$> SG.getWord32host
-  msgType   <- fromIntegral <$> SG.getWord16host
+  msgType   <- (toEnum . fromIntegral) <$> SG.getWord16host
   msgFlags  <- fromIntegral <$> SG.getWord16host
   msgSeqNum <- fromIntegral <$> SG.getWord32host
   msgPid    <- fromIntegral <$> SG.getWord32host
@@ -145,15 +148,15 @@ getMsg nestedAttrTypes = do
   getMsg' msgHeader
   where
     getMsg' msgHeader
-      | messageType msgHeader == NLC.eNLMSG_DONE = do
+      | messageType msgHeader == NLC.NLMSG_DONE = do
         SG.skip 4
         return $ MessageDone msgHeader
-      | messageType msgHeader == NLC.eNLMSG_ERROR = do
+      | messageType msgHeader == NLC.NLMSG_ERROR = do
         msgErrorCode <- fromIntegral <$> SG.getWord32host
         msgError <- getMsg nestedAttrTypes
         return $ MessageError msgHeader msgErrorCode msgError
       | otherwise = do
-        msgFamily <- getFamilyHeader (messageType msgHeader)
+        msgFamily <- getFamilyHeader $ Standard (messageType msgHeader)
         msgAttrs <- getAttrs nestedAttrTypes
         return $ Message msgHeader (Just msgFamily) msgAttrs
 

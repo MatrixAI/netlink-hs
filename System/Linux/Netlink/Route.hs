@@ -6,7 +6,7 @@
 module System.Linux.Netlink.Route where
 
 
-import Data.Serialize.Get (Get)
+import Data.Serialize.Get (Get, skip)
 import Data.Serialize.Put (Put)
 import qualified Data.Serialize.Get as SG
 import qualified Data.Serialize.Put as SP
@@ -17,8 +17,10 @@ import Data.Int (Int32)
 
 import qualified System.Linux.Netlink as NL
 import qualified System.Linux.Netlink.Constants as NLC
+import System.Linux.Netlink.Helpers (g8, g16, g32, p8, p16, p32)
 
 type RouteMessage = NL.Message RouteHeader
+
 
 data RouteHeader =
   RouteHeaderLink
@@ -47,10 +49,8 @@ instance NL.FamilyHeader RouteHeader where
   putFamilyHeader = putRouteHeader
 
 
--- getRouteHeader
--- getRouteLinkHeader
--- getRouteHeaderLink
--- pattern matchingo nly works on constructors
+
+-- pattern matching only works on constructors
 -- for constants we need to instead...
 -- what if theey were in fact constructors
 -- that would be the right way to go ahead though
@@ -58,33 +58,80 @@ instance NL.FamilyHeader RouteHeader where
 -- and then something else that converted to integral using enum
 -- but deriving Enum is interesting as that means you need to give it numbers either way
 -- but we sure do know how to do this right!?
-getRouteHeader msgType | msgType == NLC.eRTM_NEWLINK = getRouteHeaderLink
-getRouteHeader msgType | msgType == NLC.eRTM_GETLINK = getRouteHeaderLink
-getRouteHeader msgType | msgType == NLC.eRTM_DELLINK = getRouteHeaderLink
-getRouteHeader msgType | msgType == NLC.eRTM_NEWADDR = getRouteHeaderAddr
-getRouteHeader msgType | msgType == NLC.eRTM_GETADDR = getRouteHeaderAddr
-getRouteHeader msgType | msgType == NLC.eRTM_DELADDR = getRouteHeaderAddr
-getRouteHeader msgType | msgType == NLC.eRTM_NEWNEIGH = getRouteHeaderNeigh
-getRouteHeader msgType | msgType == NLC.eRTM_GETNEIGH = getRouteHeaderNeigh
-getRouteHeader msgType | msgType == NLC.eRTM_DELNEIGH = getRouteHeaderNeigh
-getRouteHeader msgType | otherwise = error $ "Cannot decode message " ++ show msgType
+
+getRouteHeader :: NL.MessageType -> Get RouteHeader
+getRouteHeader (NL.Route msgType)
+ | msgType == NLC.RTM_NEWLINK = getRouteHeaderLink
+ | msgType == NLC.RTM_GETLINK = getRouteHeaderLink
+ | msgType == NLC.RTM_DELLINK = getRouteHeaderLink
+ | msgType == NLC.RTM_NEWADDR = getRouteHeaderAddr
+ | msgType == NLC.RTM_GETADDR = getRouteHeaderAddr
+ | msgType == NLC.RTM_DELADDR = getRouteHeaderAddr
+ | msgType == NLC.RTM_NEWNEIGH = getRouteHeaderNeigh
+ | msgType == NLC.RTM_GETNEIGH = getRouteHeaderNeigh
+ | msgType == NLC.RTM_DELNEIGH = getRouteHeaderNeigh
+ | otherwise = error $ "Cannot decode message " ++ show msgType
 
 
-getRouteHeaderLink = undefined
-getRouteHeaderAddr = undefined
-getRouteHeaderNeigh = undefined
+getRouteHeaderLink :: Get RouteHeader
+getRouteHeaderLink = do
+    skip 2
+    ty    <- (toEnum . fromIntegral) <$> g16
+    idx   <- g32
+    flags <- g32
+    skip 4
+    pure $ RouteHeaderLink ty idx flags
 
-putRouteHeader = undefined
+getRouteHeaderAddr :: Get RouteHeader
+getRouteHeaderAddr = do
+    fam <- (toEnum . fromIntegral) <$> g8  -- Address type  (AF_INET or AF_INET6)
+    maskLen <- g8                          -- Prefixlength of address
+    flags <- g8                            -- Address flags
+    scope <- fromIntegral <$> g8           -- Address scope
+    idx <- g32                             -- Interface index
+    return $ RouteHeaderAddr fam maskLen flags scope idx
 
+getRouteHeaderNeigh :: Get RouteHeader
+getRouteHeaderNeigh = RouteHeaderNeigh
+    <$> g8
+    <*> (skip 3 >> fromIntegral <$> g32)
+    <*> g16
+    <*> g8
+    <*> g8
 
+putRouteHeader :: RouteHeader -> Put
+putRouteHeader (RouteHeaderLink ty idx flags) = do
+    -- p8 (fromIntegral $ fromEnum NLC.AF_UNSPEC) >> p8 0
+    -- p16 (fromIntegral $ fromEnum ty)
+    -- p32 idx
+    -- p32 flags
+    -- p32 unsignedInt
+    -- where unsignedInt = 0xFFFFFFFF
+    p8 0 >> p8 0
+    p16 (fromIntegral $ fromEnum ty)
+    p32 idx
+    p32 flags
+    p8 0 >> p8 0 >> p8 0 >> p8 0
 
-
+putRouteHeader (RouteHeaderAddr fam maskLen flags scope idx) = do
+    p8 (fromIntegral $ fromEnum fam)
+    p8 maskLen
+    p8 flags
+    p8 (fromIntegral scope)
+    p32 idx
+putRouteHeader (RouteHeaderNeigh f i s fl t) = do
+    p8 f
+    p8 0 >> p8 0 >> p8 0 --padding
+    p32 (fromIntegral i)
+    p16 s
+    p8 fl
+    p8 t
 
 -- we say that these types expose the particular kind of
 -- type?
 -- ok I see...
 -- alternatively message
--- we state 
+-- we state
 -- messageFamily :: FamilyHeader
 -- data FamilyHeader = ...
 -- but it's not extensible
@@ -104,7 +151,7 @@ putRouteHeader = undefined
 --     , addrFlags          :: Word8
 --     , addrScope          :: Word8
 --     , addrInterfaceIndex :: Word32
---     } 
+--     }
 --              | NNeighMsg
 --     { neighFamily  :: Word8 -- ^ One of System.Linux.Netlink.Constants.eAF_* values
 --     , neighIfindex :: Int32
@@ -117,10 +164,10 @@ putRouteHeader = undefined
 --   show (NLinkMsg t i f) =
 --     "LinkMessage. Type: " ++ showLinkType t ++ ", Index: " ++ show i ++ ", Flags: " ++ show f
 --   show (NAddrMsg f l fl s i) =
---     "AddrMessage. Family: " ++ show f ++ ", MLength: " ++ show l ++ ", Flags: " ++ 
+--     "AddrMessage. Family: " ++ show f ++ ", MLength: " ++ show l ++ ", Flags: " ++
 --     show fl ++ ", Scope: " ++ show s ++ ", Index: " ++ show i
 --   show (NNeighMsg f i s fl t) =
---     "NeighMessage. Family: " ++ show f ++ ", Index: " ++ show i ++ ", State: " ++ 
+--     "NeighMessage. Family: " ++ show f ++ ", Index: " ++ show i ++ ", State: " ++
 --     show s ++ ", Flags: " ++ show fl ++ ", Type: " ++ show t
 
 
@@ -156,7 +203,7 @@ putRouteHeader = undefined
 -- showLinkAttr (i, v)
 --   | i == eIFLA_STATS64 = "IFLA_STATS64:\n" ++ showStats64 v
 --   | i == eIFLA_STATS = "IFLA_STATS:\n" ++ showStats32 v
---   | i == eIFLA_AF_SPEC = 
+--   | i == eIFLA_AF_SPEC =
 --     "eIFLA_AF_SPEC: " ++ show (BS.length v) ++ '\n':indent (showAfSpec v)
 --   | otherwise = showAttr showLinkAttrType (i, v)
 
@@ -174,7 +221,7 @@ putRouteHeader = undefined
 -- showAfSpec :: ByteString -> String
 -- showAfSpec bs = case runGet getAttributes bs of
 --   (Left x) -> error ("Could not marshall AfSpec: " ++ x)
---   (Right attrs) -> 
+--   (Right attrs) ->
 --     concatMap (\(i, v) -> showAddressFamily i ++ '\n': indent (showAfSpec' v)) (toList attrs)
 
 -- showAfSpec' :: ByteString -> String

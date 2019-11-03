@@ -23,8 +23,11 @@ includeFiles =
   , "linux/genetlink.h"
   ]
 
+type Export = [String]
+type Definition = [String]
+
 outputs
-  :: Map String Integer -> [Map String Integer] -> ([[String]], [[String]])
+  :: Map String Integer -> [Map String Integer] -> ([Export], [Definition])
 outputs d e =
   let define r = H.selectDefines r d
       enum r = H.selectEnum r e
@@ -65,13 +68,15 @@ main = do
   let inc = H.mkIncludeBlock includeFiles
   defines <- H.getDefinitions inc
   enums   <- H.getEnums inc
-  let (exports, definitions) = outputs defines enums
+  -- let (exports, definitions) = outputs defines enums
+  let (_, definitions) = outputs defines enums
       prelude =
         [ "{-# OPTIONS_HADDOCK hide, prune, ignore-exports #-}"
         , "{-# LANGUAGE GeneralizedNewtypeDeriving #-}"
-        , "module System.Linux.Netlink.Constants ("
-          ++ join (intersperse ", " $ join exports)
-          ++ ") where"
+        , "module System.Linux.Netlink.Constants"
+        -- commented, maybe rewrite this to export with value constructors?: Constructor(..)
+          -- ++ " (" ++ join (intersperse ", " $ join exports) ++ ") "
+          ++ " where"
         , ""
         ]
   writeFile out $ unlines (prelude ++ join definitions)
