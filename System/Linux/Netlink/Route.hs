@@ -5,7 +5,6 @@
 
 module System.Linux.Netlink.Route where
 
-
 import Data.Serialize.Get (Get, skip)
 import Data.Serialize.Put (Put)
 import qualified Data.Serialize.Get as SG
@@ -20,7 +19,6 @@ import qualified System.Linux.Netlink.Constants as NLC
 import System.Linux.Netlink.Helpers (g8, g16, g32, p8, p16, p32)
 
 type RouteMessage = NL.Message RouteHeader
-
 
 data RouteHeader =
   RouteHeaderLink
@@ -47,7 +45,6 @@ data RouteHeader =
 instance NL.FamilyHeader RouteHeader where
   getFamilyHeader = getRouteHeader
   putFamilyHeader = putRouteHeader
-
 
 
 -- pattern matching only works on constructors
@@ -77,19 +74,19 @@ getRouteHeaderLink :: Get RouteHeader
 getRouteHeaderLink = do
     skip 2
     ty    <- (toEnum . fromIntegral) <$> g16
-    idx   <- g32
+    index <- g32
     flags <- g32
     skip 4
-    pure $ RouteHeaderLink ty idx flags
+    pure $ RouteHeaderLink ty index flags
 
 getRouteHeaderAddr :: Get RouteHeader
 getRouteHeaderAddr = do
-    fam <- (toEnum . fromIntegral) <$> g8  -- Address type  (AF_INET or AF_INET6)
-    maskLen <- g8                          -- Prefixlength of address
-    flags <- g8                            -- Address flags
-    scope <- fromIntegral <$> g8           -- Address scope
-    idx <- g32                             -- Interface index
-    return $ RouteHeaderAddr fam maskLen flags scope idx
+    family <- (toEnum . fromIntegral) <$> g8  -- Address type  (AF_INET or AF_INET6)
+    maskLength <- g8                          -- Prefixlength of address
+    flags <- g8                               -- Address flags
+    scope <- fromIntegral <$> g8              -- Address scope
+    index <- g32                              -- Interface index
+    return $ RouteHeaderAddr family maskLength flags scope index
 
 getRouteHeaderNeigh :: Get RouteHeader
 getRouteHeaderNeigh = RouteHeaderNeigh
@@ -99,33 +96,30 @@ getRouteHeaderNeigh = RouteHeaderNeigh
     <*> g8
     <*> g8
 
+-- struct ifinfomsg
 putRouteHeader :: RouteHeader -> Put
-putRouteHeader (RouteHeaderLink ty idx flags) = do
-    -- p8 (fromIntegral $ fromEnum NLC.AF_UNSPEC) >> p8 0
-    -- p16 (fromIntegral $ fromEnum ty)
-    -- p32 idx
-    -- p32 flags
-    -- p32 unsignedInt
-    -- where unsignedInt = 0xFFFFFFFF
-    p8 0 >> p8 0
-    p16 (fromIntegral $ fromEnum ty)
-    p32 idx
-    p32 flags
-    p8 0 >> p8 0 >> p8 0 >> p8 0
-
-putRouteHeader (RouteHeaderAddr fam maskLen flags scope idx) = do
-    p8 (fromIntegral $ fromEnum fam)
-    p8 maskLen
-    p8 flags
-    p8 (fromIntegral scope)
-    p32 idx
+putRouteHeader (RouteHeaderLink deviceType index flags) = do
+    p8 (fromIntegral $ fromEnum NLC.AF_UNSPEC) >> p8 0  -- AF_UNSPEC  -- p8 0 >> p8 0
+    p16 (fromIntegral $ fromEnum deviceType)            -- Device type
+    p32 index                                           -- Interface index
+    p32 flags                                           -- Device flags
+    p32 ifiChange                                       -- change mask
+    where ifiChange = 0xFFFFFFFF                        -- ifi_change is reserved for future use and should be always set to 0xFFFFFFFF.
+-- struct ifaddrmsg
+putRouteHeader (RouteHeaderAddr family maskLength flags scope index) = do
+    p8 (fromIntegral $ fromEnum family)  -- Address type
+    p8 maskLength                        -- Prefixlength of address
+    p8 flags                             -- Address flags
+    p8 (fromIntegral scope)              -- Address scope
+    p32 index                            -- Interface index
+--  struct ndmsg
 putRouteHeader (RouteHeaderNeigh f i s fl t) = do
-    p8 f
-    p8 0 >> p8 0 >> p8 0 --padding
-    p32 (fromIntegral i)
-    p16 s
-    p8 fl
-    p8 t
+    p8 f                 -- ndm_family (u8)
+    p8 0 >> p8 0 >> p8 0 -- padding: ndm_pad1(u8) + ndm_pad2(u16)
+    p32 (fromIntegral i) -- ndm_ifindex (s32)
+    p16 s                -- ndm_state (u16)
+    p8 fl                -- ndm_flags (u8)
+    p8 t                 -- ndm_type (u8)
 
 -- we say that these types expose the particular kind of
 -- type?
