@@ -18,7 +18,8 @@ import Data.List (intersperse)
 import Data.Serialize.Get
 import Data.Serialize.Put
 import Data.Word (Word8)
-
+import Foreign.C.Types (CInt)
+import qualified System.Linux.Netlink.C as C
 -- Hide makeSocket since we will defien our own
 import System.Linux.Netlink hiding (makeSocket)
 
@@ -32,32 +33,31 @@ data GenlHeader = GenlHeader
     , genlVersion :: Word8
     } deriving (Eq)
 
--- |The 'Convertable' instance for 'GenlHeader'
-instance Convertable GenlHeader where
-  getPut = putGeHeader
-  getGet _ = getGenlHeader
+instance FamilyHeader GenlHeader where
+  getFamilyHeader = getGenlHeader
+  putFamilyHeader = putGeHeader
 
 {- |A wrapper around 'GenlHeader'
 
 This may be used by actual implementations to handle additional static data
 placed after the genl header by the protocol they implement.
 -}
-data GenlData a = GenlData 
+data GenlData a = GenlData
     {
       genlDataHeader :: GenlHeader
     , genlDataData   :: a
     } deriving (Eq)
 
 -- |The 'Convertable' instance for 'GenlData'
-instance Convertable a => Convertable (GenlData a) where
-  getPut (GenlData h a) = putGeHeader h >> getPut a
-  getGet t = do
+instance FamilyHeader a => FamilyHeader (GenlData a) where
+  putFamilyHeader (GenlData h a) = putGeHeader h >> putFamilyHeader a
+  getFamilyHeader t = do
     hdr <- getGenlHeader
-    dat <- getGet t
+    dat <- getFamilyHeader t
     return $GenlData hdr dat
 
 -- |Type declaration for genetlink packets
-type GenlPacket a = Packet (GenlData a)
+type GenlPacket a = Message (GenlData a)
 
 -- |Show isntance of GenlHeader
 instance Show GenlHeader where
@@ -69,18 +69,13 @@ instance {-# OVERLAPPABLE #-} Show a => Show (GenlData a) where
   show (GenlData hdr content) =
     show hdr ++ show content
 
--- |Show instance of GenlData for NoData
-instance Show (GenlData NoData) where
-  show (GenlData hdr _) =
-    show hdr
-
 -- |Show Instance for GenlPacket
 instance {-# OVERLAPPABLE #-} Show a => Show (GenlPacket a) where
-  showList xs = ((concat . intersperse "===\n" . map show $xs) ++)
-  show (Packet _ cus attrs) =
+  showList xs = ((concat . intersperse "===\n" . map show $ xs) ++)
+  show (Message _ cus attrs) =
     "GenlPacket: " ++ show cus ++ "\n" ++
-    "Attrs: \n" ++ showNLAttrs attrs
-  show p = showPacket p
+    "Attrs: \n" ++ (concat . intersperse " " . map show $ attrs)
+  -- show p = show p
 
 -- |'Get' function for 'GenlHeader'
 getGenlHeader :: Get GenlHeader
@@ -97,7 +92,14 @@ putGeHeader gehdr = do
   putWord8 $ genlVersion gehdr
   putWord16host 0
 
+-- |Open a 'NetlinkSocket'. This is the generic function
+makeSocketGeneric
+  :: Int -- ^The netlink family to use
+  -> IO NetlinkSocket
+makeSocketGeneric = fmap NS . C.makeSocketGeneric
+
+-- | Typesafe wrapper around a 'CInt' (fd)
+newtype NetlinkSocket = NS CInt
 -- |'makeSocketGeneric' preapplied for genetlink family
 makeSocket :: IO NetlinkSocket
 makeSocket = makeSocketGeneric 16
-

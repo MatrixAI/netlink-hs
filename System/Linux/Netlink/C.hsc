@@ -39,7 +39,10 @@ import Foreign.Marshal.Utils (with)
 import Foreign.Ptr (Ptr, castPtr, plusPtr)
 import Foreign.Storable (Storable(..))
 
-import System.Linux.Netlink.Constants (eAF_NETLINK, eNETLINK_ADD_MEMBERSHIP, eNETLINK_DROP_MEMBERSHIP)
+import System.Linux.Netlink.Constants ( AddressFamily( AF_NETLINK )
+                                      , NetlinkFamily( NETLINK_ADD_MEMBERSHIP )
+                                      , NetlinkFamily( NETLINK_DROP_MEMBERSHIP )
+                                      )
 
 #include <unistd.h>
 #include <string.h>
@@ -67,11 +70,11 @@ instance Storable SockAddrNetlink where
     alignment _ = 4
     peek p = do
         family <- #{peek struct sockaddr_nl, nl_family} p
-        when ((family :: CShort) /= eAF_NETLINK) $ fail "Bad address family"
+        when ((family :: CShort) /= (fromIntegral $ fromEnum AF_NETLINK)) $ fail "Bad address family"
         SockAddrNetlink . fromIntegral <$> (#{peek struct sockaddr_nl, nl_pid} p :: IO CUInt)
     poke p (SockAddrNetlink pid) = do
         zero p
-        #{poke struct sockaddr_nl, nl_family} p (eAF_NETLINK :: CShort)
+        #{poke struct sockaddr_nl, nl_family} p ((fromIntegral $ fromEnum AF_NETLINK) :: CShort)
         #{poke struct sockaddr_nl, nl_pid   } p (fromIntegral pid :: CUInt)
 
 data IoVec = IoVec (Ptr (), Int)
@@ -109,12 +112,12 @@ makeSocket = makeSocketGeneric #{const NETLINK_ROUTE}
 
 -- TODO maybe readd the unique thingy (look at git log)
 -- |Create any netlink socket
-makeSocketGeneric 
+makeSocketGeneric
   :: Int -- ^The netlink family to use
   -> IO CInt
 makeSocketGeneric prot = do
   fd <- throwErrnoIfMinus1 "makeSocket.socket" $
-          c_socket eAF_NETLINK #{const SOCK_RAW} (fromIntegral prot)
+          c_socket (fromIntegral $ fromEnum AF_NETLINK) #{const SOCK_RAW} (fromIntegral prot)
   -- we need to bind or joining multicast groups will be useless
   with (SockAddrNetlink 0) $ \addr ->
     throwErrnoIfMinus1_ "makeSocket.bind" $
@@ -172,8 +175,8 @@ joinOrLeaveMulticastGroup beMember fd fid = do
     size = fromIntegral $sizeOf (undefined :: CInt)
     sol_netlink = 270 :: CInt
     value = if beMember
-      then eNETLINK_ADD_MEMBERSHIP
-      else eNETLINK_DROP_MEMBERSHIP
+      then (fromIntegral $ fromEnum NETLINK_ADD_MEMBERSHIP)
+      else (fromIntegral $ fromEnum NETLINK_DROP_MEMBERSHIP)
 
 -- |Join a netlink multicast group
 joinMulticastGroup :: CInt -> Word32 -> IO ()
@@ -182,5 +185,3 @@ joinMulticastGroup = joinOrLeaveMulticastGroup True
 -- |Leave a netlink multicast group
 leaveMulticastGroup :: CInt -> Word32 -> IO ()
 leaveMulticastGroup = joinOrLeaveMulticastGroup False
-
-

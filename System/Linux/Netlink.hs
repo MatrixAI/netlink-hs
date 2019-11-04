@@ -26,6 +26,7 @@ import qualified Data.List.NonEmpty as NE
 import qualified System.Linux.Netlink.Constants as NLC
 import Data.Word (Word8, Word16, Word32)
 import Data.Int (Int32)
+import qualified Data.ByteString as BS (length)
 
 data MessageHeader = MessageHeader
   { messageType :: NLC.MessageType
@@ -72,6 +73,8 @@ type Attributes = [Attribute]
 data Attribute = Attribute AttributeHeader
   (Either B.ByteString (NE.NonEmpty Attribute))
   deriving (Show, Eq)
+
+
 
 isEmpty :: SG.Get Bool
 isEmpty = SG.isEmpty
@@ -162,3 +165,36 @@ getMsg nestedAttrTypes = do
 
 getMsgs :: (FamilyHeader a) => Set AttributeType -> Get (Messages a)
 getMsgs nestedAttrTypes = whileM isNotEmpty $ getMsg nestedAttrTypes
+
+-- |'Put' the netlink 'Header'
+putMsgHeader
+  :: Int -- ^The length of the message
+  -> MessageHeader -- ^The header itself
+  -> Put
+putMsgHeader len (MessageHeader ty flags seqnum pid) = do
+    SP.putWord32host (fromIntegral len)
+    SP.putWord16host (fromIntegral . fromEnum $ ty)
+    SP.putWord16host (fromIntegral flags)
+    SP.putWord32host seqnum
+    SP.putWord32host pid
+
+-- |'Put' a 'Map' of 'Attributes'
+putAttributes :: Attributes -> Put
+putAttributes = mapM_ putAttr
+  -- where
+  --   putAttr :: Attribute -> Put
+  --   putAttr (ty, value) = do
+  --       SP.putWord16host (fromIntegral $ BS.length value + 4)
+  --       SP.putWord16host (fromIntegral ty)
+  --       SP.putByteString value
+  --       when (BS.length value `mod` 4 /= 0) $ do
+  --         replicateM_ (4 - (BS.length value `mod` 4)) (SP.putWord8 0)
+  where
+    putAttr :: Attribute -> Put
+    -- putAttr (Attribute (AttributeHeader ty) (Right attribute)) = do
+    putAttr (Attribute (AttributeHeader ty) (Left value)) = do
+        SP.putWord16host (fromIntegral $ BS.length value + 4)
+        SP.putWord16host (fromIntegral ty)
+        SP.putByteString value
+        when (BS.length value `mod` 4 /= 0) $ do
+          replicateM_ (4 - (BS.length value `mod` 4)) (SP.putWord8 0)
