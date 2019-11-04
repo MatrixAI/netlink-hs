@@ -73,53 +73,53 @@ getRouteHeader (NL.Route msgType)
 getRouteHeaderLink :: Get RouteHeader
 getRouteHeaderLink = do
     skip 2
-    ty    <- (toEnum . fromIntegral) <$> g16
-    index <- g32
-    flags <- g32
+    ty    <- (toEnum . fromIntegral) <$> SG.getWord16host
+    index <- SG.getWord32host
+    flags <- SG.getWord32host
     skip 4
     pure $ RouteHeaderLink ty index flags
 
 getRouteHeaderAddr :: Get RouteHeader
 getRouteHeaderAddr = do
-    family <- (toEnum . fromIntegral) <$> g8  -- Address type  (AF_INET or AF_INET6)
-    maskLength <- g8                          -- Prefixlength of address
-    flags <- g8                               -- Address flags
-    scope <- fromIntegral <$> g8              -- Address scope
-    index <- g32                              -- Interface index
+    family <- (toEnum . fromIntegral) <$> SG.getWord8  -- Address type  (AF_INET or AF_INET6)
+    maskLength <- SG.getWord8                          -- Prefixlength of address
+    flags <- SG.getWord8                               -- Address flags
+    scope <- fromIntegral <$> SG.getWord8              -- Address scope
+    index <- SG.getWord32host                             -- Interface index
     return $ RouteHeaderAddr family maskLength flags scope index
 
 getRouteHeaderNeigh :: Get RouteHeader
 getRouteHeaderNeigh = RouteHeaderNeigh
-    <$> g8
-    <*> (skip 3 >> fromIntegral <$> g32)
-    <*> g16
-    <*> g8
-    <*> g8
+    <$> SG.getWord8
+    <*> (skip 3 >> fromIntegral <$> SG.getWord32host)
+    <*> SG.getWord16host
+    <*> SG.getWord8
+    <*> SG.getWord8
 
 -- struct ifinfomsg
 putRouteHeader :: RouteHeader -> Put
 putRouteHeader (RouteHeaderLink deviceType index flags) = do
-    p8 (fromIntegral $ fromEnum NLC.AF_UNSPEC) >> p8 0  -- AF_UNSPEC  -- p8 0 >> p8 0
-    p16 (fromIntegral $ fromEnum deviceType)            -- Device type
-    p32 index                                           -- Interface index
-    p32 flags                                           -- Device flags
-    p32 ifiChange                                       -- change mask
-    where ifiChange = 0xFFFFFFFF                        -- ifi_change is reserved for future use and should be always set to 0xFFFFFFFF.
+    SP.putWord8 (fromIntegral $ fromEnum NLC.AF_UNSPEC) >> p8 0  -- AF_UNSPEC  -- p8 0 >> p8 0
+    SP.putWord16host (fromIntegral $ fromEnum deviceType)  -- Device type
+    SP.putWord32host index                                 -- Interface index
+    SP.putWord32host flags                                 -- Device flags
+    SP.putWord32host ifiChange                             -- change mask
+    where ifiChange = 0xFFFFFFFF                           -- ifi_change is reserved for future use and should be always set to 0xFFFFFFFF.
 -- struct ifaddrmsg
 putRouteHeader (RouteHeaderAddr family maskLength flags scope index) = do
-    p8 (fromIntegral $ fromEnum family)  -- Address type
-    p8 maskLength                        -- Prefixlength of address
-    p8 flags                             -- Address flags
-    p8 (fromIntegral scope)              -- Address scope
-    p32 index                            -- Interface index
+    SP.putWord8 (fromIntegral $ fromEnum family)  -- Address type
+    SP.putWord8 maskLength                        -- Prefixlength of address
+    SP.putWord8 flags                             -- Address flags
+    SP.putWord8 (fromIntegral scope)              -- Address scope
+    SP.putWord32host index                        -- Interface index
 --  struct ndmsg
 putRouteHeader (RouteHeaderNeigh f i s fl t) = do
-    p8 f                 -- ndm_family (u8)
-    p8 0 >> p8 0 >> p8 0 -- padding: ndm_pad1(u8) + ndm_pad2(u16)
-    p32 (fromIntegral i) -- ndm_ifindex (s32)
-    p16 s                -- ndm_state (u16)
-    p8 fl                -- ndm_flags (u8)
-    p8 t                 -- ndm_type (u8)
+    SP.putWord8 f                                   -- ndm_family (u8)
+    SP.putWord8 0 >> SP.putWord8 0 >> SP.putWord8 0 -- padding: ndm_pad1(u8) + ndm_pad2(u16)
+    SP.putWord32host (fromIntegral i)               -- ndm_ifindex (s32)
+    SP.putWord16host s                              -- ndm_state (u16)
+    SP.putWord8 fl                                  -- ndm_flags (u8)
+    SP.putWord8 t                                   -- ndm_type (u8)
 
 -- we say that these types expose the particular kind of
 -- type?
