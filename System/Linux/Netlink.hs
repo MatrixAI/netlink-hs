@@ -22,6 +22,7 @@ import qualified Data.Map as M
 import Data.Set (Set)
 import qualified Data.Set as Set
 import qualified Data.ByteString as B
+import Data.ByteString (ByteString)
 import qualified Data.List.NonEmpty as NE
 import qualified System.Linux.Netlink.Constants as NLC
 import Data.Word (Word8, Word16, Word32)
@@ -193,6 +194,17 @@ getAttr nestedAttrTypes = do
       Just nestedAttrs' -> Attribute attrHeader (Right $ nestedAttrs')
       Nothing           -> Attribute attrHeader (Left "")
 
+-- |'Put' a 'Message' so it can be sent
+putMessage :: Message a -> [ByteString]
+putMessage (Message header family attributes) =
+  let attrs = SP.runPut $ putAttributes attributes
+      cus   = case family of
+        Nothing -> B.empty
+        Just family -> SP.runPut $ putFamilyHeader family
+      hdr   = SP.runPut $ putMsgHeader (BS.length attrs + BS.length cus + msgHeaderSize) header
+  in [hdr, cus, attrs]
+putMessage etc = error $ "Cannot convert this message" ++ show etc
+
 getAttrPadding :: Int -> Get ()
 getAttrPadding size = do
   let remainder = attrAlignRemainder size
@@ -200,7 +212,6 @@ getAttrPadding size = do
   if not e && remainder /= 0
   then SG.skip $ attrAlign - remainder
   else return ()
-
 
 -- putAttrPadding
 

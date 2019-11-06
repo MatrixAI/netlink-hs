@@ -20,6 +20,7 @@ import qualified System.Linux.Netlink as NL
 import qualified System.Linux.Netlink.Constants as NLC
 import System.Linux.Netlink.Helpers (g8, g16, g32, p8, p16, p32)
 import Data.Char (chr, ord)
+import Data.Set (Set)
 import Prelude hiding (init, lookup)
 
 type RouteMessage = NL.Message RouteHeader
@@ -136,11 +137,14 @@ putRouteHeader (RouteHeaderNeigh f i s fl t) = do
 -- so we need to use typeclasses instead
 -- so you can easily add new families instead
 
--- getRouteMessages :: ByteString -> Either String [RoutePacket]
-
 -- -- |'Get' a route message or an error
--- getRoutePackets :: ByteString -> Either String [RoutePacket]
--- getRoutePackets = getPackets
+-- getRouteMessages :: ByteString -> Either String [RoutePacket]
+-- getRouteMessages :: Set RouteAttrType -> Get (NL.Messages RouteMessage)
+-- (FamilyHeader RouteMessage) =>
+-- type Messages a = [Message a]
+
+-- getRouteMessages :: Set NL.AttributeType -> Get (NL.Messages RouteMessage)
+-- getRouteMessages = NL.getMsgs
 
 data RouteAttrType = Addr NLC.RouteAddrAttrType
                    | Link NLC.RouteLinkAttrType
