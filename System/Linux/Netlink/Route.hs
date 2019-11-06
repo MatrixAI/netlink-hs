@@ -136,25 +136,32 @@ putRouteHeader (RouteHeaderNeigh f i s fl t) = do
 -- so we need to use typeclasses instead
 -- so you can easily add new families instead
 
+-- getRouteMessages :: ByteString -> Either String [RoutePacket]
 
 -- -- |'Get' a route message or an error
 -- getRoutePackets :: ByteString -> Either String [RoutePacket]
 -- getRoutePackets = getPackets
 
+data RouteAttrType = Addr NLC.RouteAddrAttrType
+                   | Link NLC.RouteLinkAttrType
+                   | Neigh NLC.RouteNeighAttrType
+                   deriving (Show, Eq)
 
-data RouteAttribute = Attribute RouteHeader
-  (Either B.ByteString (NE.NonEmpty RouteAttribute))
-  deriving (Show, Eq)
+type RouteAttribute = (RouteAttrType, ByteString)
 
 type RouteAttributes = [RouteAttribute]
 
 -- |typedef for utility functions
-type AttributeReader a = NL.Attributes -> Maybe a
+type AttributeReader a = RouteAttributes -> Maybe a
 
 -- |typedef for utility functions
-type AttributeWriter a = a -> NL.Attributes -> NL.Attributes
+type AttributeWriter a = a -> RouteAttributes -> RouteAttributes
 
-lookup = Data.List.lookup
+lookup :: RouteAttrType -> RouteAttributes -> Maybe ByteString
+lookup x attrs = Data.List.lookup x attrs
+
+insert :: RouteAttrType -> ByteString -> RouteAttributes -> RouteAttributes
+insert a b attrs = (a, b) : attrs
 --
 -- Link message attributes
 --
@@ -162,76 +169,78 @@ type LinkAddress = (Word8, Word8, Word8, Word8, Word8, Word8)
 
 -- | get L2 address from netlink attributes
 getLinkAddress :: AttributeReader LinkAddress
-getLinkAddress attrs = decodeMAC <$> lookup NLC.IFLA_ADDRESS attrs
+getLinkAddress attrs = decodeMAC <$> lookup (Link NLC.IFLA_ADDRESS) attrs
 
--- -- | set L2 address on netlink attributes
--- putLinkAddress :: AttributeWriter LinkAddress
--- putLinkAddress addr = insert NLC.IFLA_ADDRESS (encodeMAC addr)
+-- | get L2 broadcast address from netlink attributes
+getLinkBroadcast :: AttributeReader LinkAddress
+getLinkBroadcast attrs = decodeMAC <$> lookup (Link NLC.IFLA_BROADCAST) attrs
 
--- -- | get L2 broadcast address from netlink attributes
--- getLinkBroadcast :: AttributeReader LinkAddress
--- getLinkBroadcast attrs = decodeMAC <$> lookup NLC.IFLA_BROADCAST attrs
+-- | get interface name from netlink attributes
+getLinkName :: AttributeReader String
+getLinkName attrs = getString <$> lookup (Link NLC.IFLA_IFNAME) attrs
 
--- -- | set L2 broadcast address on netlink attributes
--- putLinkBroadcast :: AttributeWriter LinkAddress
--- putLinkBroadcast addr = insert NLC.IFLA_BROADCAST (encodeMAC addr)
+-- | get mtu from netlink attributes
+getLinkMTU :: AttributeReader Word32
+getLinkMTU attrs = get32 =<< lookup (Link NLC.IFLA_MTU) attrs
 
--- -- | get interface name from netlink attributes
--- getLinkName :: AttributeReader String
--- getLinkName attrs = getString <$> lookup NLC.IFLA_IFNAME attrs
+-- | I actually have no idea what QDisc is
+getLinkQDisc :: AttributeReader String
+getLinkQDisc attrs = getString <$> lookup (Link NLC.IFLA_QDISC) attrs
 
--- -- | set interface name on netlink attributes
--- putLinkName :: AttributeWriter String
--- putLinkName ifname = insert NLC.IFLA_IFNAME (putString ifname)
+-- | I should look this up
+getLinkTXQLen :: AttributeReader Word32
+getLinkTXQLen attrs = get32 =<< lookup (Link NLC.IFLA_TXQLEN) attrs
 
--- -- | get mtu from netlink attributes
--- getLinkMTU :: AttributeReader Word32
--- getLinkMTU attrs = get32 =<< lookup NLC.IFLA_MTU attrs
+-- |get interface address from netlink attributes of 'NAddrMsg'
+getIFAddr :: AttributeReader ByteString
+getIFAddr = lookup ( Addr NLC.IFA_ADDRESS)
 
--- -- | set mtu on netlink attributes
--- putLinkMTU :: AttributeWriter Word32
--- putLinkMTU mtu = insert NLC.IFLA_MTU (put32 mtu)
+-- |get L2 address from netlink attributes of 'NNeighMsg'
+getLLAddr :: AttributeReader LinkAddress
+getLLAddr attrs = decodeMAC <$> lookup (Neigh NLC.NDA_LLADDR) attrs
 
--- -- TODO: IFLA_LINK - need to understand what it does
+-- |get destination address from netlink attributes of 'NNeighMsg'
+getDstAddr :: AttributeReader ByteString
+getDstAddr = lookup (Neigh NLC.NDA_DST)
 
--- -- | I actually have no idea what QDisc is
--- getLinkQDisc :: AttributeReader String
--- getLinkQDisc attrs = getString <$> lookup NLC.IFLA_QDISC attrs
+-- | set L2 address on netlink attributes
+putLinkAddress :: AttributeWriter LinkAddress
+putLinkAddress addr = insert (Link NLC.IFLA_ADDRESS) (encodeMAC addr)
 
--- -- | I actually have no idea what QDisc is
--- putLinkQDisc :: AttributeWriter String
--- putLinkQDisc disc = insert NLC.IFLA_QDISC (putString disc)
+-- | set L2 broadcast address on netlink attributes
+putLinkBroadcast :: AttributeWriter LinkAddress
+putLinkBroadcast addr = insert (Link NLC.IFLA_BROADCAST) (encodeMAC addr)
 
--- -- TODO: IFLA_STATS - bloody huge message, will deal with it later.
+-- | set interface name on netlink attributes
+putLinkName :: AttributeWriter String
+putLinkName ifname = insert (Link NLC.IFLA_IFNAME) (putString ifname)
 
--- -- TODO: IFLA_{COST,PRIORITY,MASTER,WIRELESS,PROTINFO} - need to
--- -- understand what they do.
+-- | set mtu on netlink attributes
+putLinkMTU :: AttributeWriter Word32
+putLinkMTU mtu = insert (Link NLC.IFLA_MTU) (put32 mtu)
 
--- -- | I should look this up
--- getLinkTXQLen :: AttributeReader Word32
--- getLinkTXQLen attrs = get32 =<< lookup NLC.IFLA_TXQLEN attrs
+-- TODO: IFLA_LINK - need to understand what it does
 
--- -- | I should look this up
--- putLinkTXQLen :: AttributeWriter Word32
--- putLinkTXQLen len = insert NLC.IFLA_TXQLEN (put32 len)
+-- | I actually have no idea what QDisc is
+putLinkQDisc :: AttributeWriter String
+putLinkQDisc disc = insert (Link NLC.IFLA_QDISC) (putString disc)
 
--- -- TODO: IFLA_{MAP,WEIGHT} - need to figure out
+-- TODO: IFLA_STATS - bloody huge message, will deal with it later.
 
--- -- TODO: IFLA_{LINKMODE,LINKINFO} - see Documentation/networking/operstates.txt
+-- TODO: IFLA_{COST,PRIORITY,MASTER,WIRELESS,PROTINFO} - need to
+-- understand what they do.
 
--- -- TODO: IFLA_{NET_NS_PID,IFALIAS} - need to figure out
 
--- -- |get interface address from netlink attributes of 'NAddrMsg'
--- getIFAddr :: AttributeReader ByteString
--- getIFAddr = lookup eIFA_ADDRESS
 
--- -- |get L2 address from netlink attributes of 'NNeighMsg'
--- getLLAddr :: AttributeReader LinkAddress
--- getLLAddr attrs = decodeMAC <$> lookup NLC.NDA_LLADDR attrs
+-- | I should look this up
+putLinkTXQLen :: AttributeWriter Word32
+putLinkTXQLen len = insert (Link NLC.IFLA_TXQLEN) (put32 len)
 
--- -- |get destination address from netlink attributes of 'NNeighMsg'
--- getDstAddr :: AttributeReader ByteString
--- getDstAddr = lookup NLC.NDA_DST
+-- TODO: IFLA_{MAP,WEIGHT} - need to figure out
+
+-- TODO: IFLA_{LINKMODE,LINKINFO} - see Documentation/networking/operstates.txt
+
+-- TODO: IFLA_{NET_NS_PID,IFALIAS} - need to figure out
 
 -- --
 -- -- Helpers
