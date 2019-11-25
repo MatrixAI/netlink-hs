@@ -2,6 +2,7 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeFamilies       #-}
 
 module System.Linux.Netlink.Route where
 
@@ -47,9 +48,12 @@ data RouteHeader =
   }
   deriving (Show, Eq)
 
-instance NL.FamilyHeader RouteHeader where
-  getFamilyHeader = getRouteHeader
-  putFamilyHeader = putRouteHeader
+-------------------------------------
+data RouteMessageType = Route NLC.RouteMessageType  deriving (Show, Eq)
+instance NL.FamilyHeader RouteMessageType where
+  data MessageType RouteMessageType = RouteMessageType'
+  getFamilyHeader RouteMessageType' = getRouteHeader
+  -- putFamilyHeader = putRouteHeader
 
 
 -- pattern matching only works on constructors
@@ -61,17 +65,17 @@ instance NL.FamilyHeader RouteHeader where
 -- but deriving Enum is interesting as that means you need to give it numbers either way
 -- but we sure do know how to do this right!?
 
-getRouteHeader :: NL.MessageType -> Get RouteHeader
-getRouteHeader (NL.Route msgType)
- | msgType == NLC.RTM_NEWLINK = getRouteHeaderLink
- | msgType == NLC.RTM_GETLINK = getRouteHeaderLink
- | msgType == NLC.RTM_DELLINK = getRouteHeaderLink
- | msgType == NLC.RTM_NEWADDR = getRouteHeaderAddr
- | msgType == NLC.RTM_GETADDR = getRouteHeaderAddr
- | msgType == NLC.RTM_DELADDR = getRouteHeaderAddr
- | msgType == NLC.RTM_NEWNEIGH = getRouteHeaderNeigh
- | msgType == NLC.RTM_GETNEIGH = getRouteHeaderNeigh
- | msgType == NLC.RTM_DELNEIGH = getRouteHeaderNeigh
+-- getRouteHeader :: RouteMessageType -> Get RouteHeader
+getRouteHeader msgType
+ | msgType == (Route NLC.RTM_NEWLINK) = getRouteHeaderLink
+ | msgType == (Route NLC.RTM_GETLINK) = getRouteHeaderLink
+ | msgType == (Route NLC.RTM_DELLINK) = getRouteHeaderLink
+ | msgType == (Route NLC.RTM_NEWADDR) = getRouteHeaderAddr
+ | msgType == (Route NLC.RTM_GETADDR) = getRouteHeaderAddr
+ | msgType == (Route NLC.RTM_DELADDR) = getRouteHeaderAddr
+ | msgType == (Route NLC.RTM_NEWNEIGH) = getRouteHeaderNeigh
+ | msgType == (Route NLC.RTM_GETNEIGH) = getRouteHeaderNeigh
+ | msgType == (Route NLC.RTM_DELNEIGH) = getRouteHeaderNeigh
  | otherwise = error $ "Cannot decode message " ++ show msgType
 
 
