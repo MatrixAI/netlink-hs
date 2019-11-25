@@ -26,25 +26,26 @@ import Data.Serialize.Put (Put)
 import System.Linux.Netlink.Helpers (g64, p64, g32, p32)
 import Data.Word (Word64)
 
--- |Data Structure for rtnl link stats
-data LinkStat = LinkStat
-  { rxPackets         :: Word64
-  , txPackets         :: Word64
-  , rxBytes           :: Word64
-  , txBytes           :: Word64
-  , rxErrors          :: Word64
-  , txErrors          :: Word64
-  , rxDropped         :: Word64
-  , txDropped         :: Word64
-  , multicast         :: Word64
-  , collisions        :: Word64
+-- | Data Structure for rtnl link stats
+data LinkStat = LinkStat {
+    rxPackets         :: Word64    -- ^ Total packets received.
+  , txPackets         :: Word64    -- ^ Total packets transmitted.
+  , rxBytes           :: Word64    -- ^ Total bytes received.
+  , txBytes           :: Word64    -- ^ Total bytes transmitted.
+  , rxErrors          :: Word64    -- ^ Bad packets received.
+  , txErrors          :: Word64    -- ^ Packet transmission problems.
+  , rxDropped         :: Word64    -- ^ Dropped due to full buffers.
+  , txDropped         :: Word64    -- ^ Out of memory.
+  , multicast         :: Word64    -- ^ Multicast packets received.
+  , collisions        :: Word64    -- ^ Packet collisions.
 
-  , rxLengthErrors    :: Word64
-  , rxOverErrors      :: Word64
-  , rxCRCErrors       :: Word64
-  , rxFrameErrors     :: Word64
-  , rxFifoErrors      :: Word64
-  , rxMissedErrors    :: Word64
+  , rxLengthErrors    :: Word64    -- ^ Size/header mismatch.
+  , rxOverErrors      :: Word64    -- ^ Receive ring-buffer overflow.
+  , rxCRCErrors       :: Word64    -- ^ CRC errors.
+  , rxFrameErrors     :: Word64    -- ^ Frame-alignment errors.
+  , rxFifoErrors      :: Word64    -- ^ Receiver FIFO overrun.
+  , rxMissedErrors    :: Word64    -- ^ Receiver missed packets.
+
 
   , txAbortedErrors   :: Word64
   , txCarrierErrors   :: Word64
@@ -54,7 +55,8 @@ data LinkStat = LinkStat
 
   , rxCompressed      :: Word64
   , txCompressed      :: Word64
-  } deriving (Eq, Show)
+  , rxNoHandler       :: Word64    -- ^ Dropped due to lack of handler.
+} deriving (Eq, Show)
 
 
 -- |Get a 'LinkStat' object from a 64bit C struct
@@ -74,69 +76,41 @@ putLinkStat32 :: LinkStat -> Put
 putLinkStat32 = putLinkStat p32
 
 
-
 -- Internal helper functions:
 getLinkStat :: Integral a => Get a -> Get LinkStat
 getLinkStat get = do
-  rxp <- fromIntegral <$> get
-  txp <- fromIntegral <$> get
-  rxb <- fromIntegral <$> get
-  txb <- fromIntegral <$> get
-  rxe <- fromIntegral <$> get
-  txe <- fromIntegral <$> get
-  rxd <- fromIntegral <$> get
-  txd <- fromIntegral <$> get
-  mul <- fromIntegral <$> get
-  col <- fromIntegral <$> get
-
-  rxle <- fromIntegral <$> get
-  rxoe <- fromIntegral <$> get
-  rxce <- fromIntegral <$> get
-  rxfe <- fromIntegral <$> get
-  rxfi <- fromIntegral <$> get
-  rxme <- fromIntegral <$> get
-
-  txae <- fromIntegral <$> get
-  txce <- fromIntegral <$> get
-  txfi <- fromIntegral <$> get
-  txhe <- fromIntegral <$> get
-  txwe <- fromIntegral <$> get
-
-  rxco <- fromIntegral <$> get
-  txco <- fromIntegral <$> get
-  return (LinkStat rxp txp rxb txb rxe
-                   txe rxd txd mul col
-                   rxle rxoe rxce rxfe
-                   rxfi rxme txae txce
-                   txfi txhe txwe rxco
-                   txco)
+  let g = fromIntegral <$> get
+  LinkStat
+            <$>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g
+            <*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g<*>g
 
 putLinkStat :: Num a => (a -> Put) -> LinkStat -> Put
 putLinkStat put msg = do
-  put . fromIntegral $ rxPackets msg
-  put . fromIntegral $ txPackets msg
-  put . fromIntegral $ rxBytes msg
-  put . fromIntegral $ txBytes msg
-  put . fromIntegral $ rxErrors msg
-  put . fromIntegral $ txErrors msg
-  put . fromIntegral $ rxDropped msg
-  put . fromIntegral $ txDropped msg
-  put . fromIntegral $ multicast msg
-  put . fromIntegral $ collisions msg
+  let p = put . fromIntegral
+  p $ rxPackets msg
+  p $ txPackets msg
+  p $ rxBytes msg
+  p $ txBytes msg
+  p $ rxErrors msg
+  p $ txErrors msg
+  p $ rxDropped msg
+  p $ txDropped msg
+  p $ multicast msg
+  p $ collisions msg
 
-  put . fromIntegral $ rxLengthErrors msg
-  put . fromIntegral $ rxOverErrors msg
-  put . fromIntegral $ rxCRCErrors msg
-  put . fromIntegral $ rxFrameErrors msg
-  put . fromIntegral $ rxFifoErrors msg
-  put . fromIntegral $ rxMissedErrors msg
+  p $ rxLengthErrors msg
+  p $ rxOverErrors msg
+  p $ rxCRCErrors msg
+  p $ rxFrameErrors msg
+  p $ rxFifoErrors msg
+  p $ rxMissedErrors msg
 
-  put . fromIntegral $ txAbortedErrors msg
-  put . fromIntegral $ txCarrierErrors msg
-  put . fromIntegral $ txFifoErrors msg
-  put . fromIntegral $ txHeartbeatErrors msg
-  put . fromIntegral $ txWindowErrors msg
+  p $ txAbortedErrors msg
+  p $ txCarrierErrors msg
+  p $ txFifoErrors msg
+  p $ txHeartbeatErrors msg
+  p $ txWindowErrors msg
 
-  put . fromIntegral $ rxCompressed msg
-  put . fromIntegral $ txCompressed msg
-
+  p $ rxCompressed msg
+  p $ txCompressed msg
+  p $ rxNoHandler

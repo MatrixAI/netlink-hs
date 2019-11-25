@@ -12,7 +12,10 @@ import Data.Serialize
 
 query :: NLR.RoutePacket
 query = NL.Packet
-    (NL.Header NLC.eRTM_GETLINK (NLC.fNLM_F_ROOT .|. NLC.fNLM_F_MATCH .|. NLC.fNLM_F_REQUEST) 0 0)
+    (NL.Header NLC.RTM_GETLINK  (   NLC.fNLM_F_ROOT
+                                .|. NLC.fNLM_F_MATCH
+                                .|. NLC.fNLM_F_REQUEST
+                                ) 0 0)
     (NLR.NLinkMsg 0 0 0)
     mempty
 

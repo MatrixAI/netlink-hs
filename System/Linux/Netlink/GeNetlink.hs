@@ -54,7 +54,7 @@ instance FamilyHeader a => FamilyHeader (GenlData a) where
   getFamilyHeader t = do
     hdr <- getGenlHeader
     dat <- getFamilyHeader t
-    return $GenlData hdr dat
+    return $ GenlData hdr dat
 
 -- |Type declaration for genetlink packets
 type GenlPacket a = Message (GenlData a)
@@ -83,7 +83,7 @@ getGenlHeader = do
     cmd <- getWord8
     version <- getWord8
     _ <- getWord16host
-    return $GenlHeader cmd version
+    return $ GenlHeader cmd version
 
 -- |'Put' function for 'GenlHeader'
 putGeHeader :: GenlHeader -> Put
